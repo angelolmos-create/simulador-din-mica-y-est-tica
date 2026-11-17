@@ -1,0 +1,2684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratorio de Fuerzas y Movimiento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #E9EFF3;
+    --surface: #FFFFFF;
+    --surface-2: #F3F7F9;
+    --line: #D2DCE3;
+    --line-2: #E3EAEF;
+    --ink: #10202B;
+    --ink-2: #425666;
+    --ink-3: #66798A;
+    --brand: #0B6A8F;
+    --brand-dark: #08485F;
+    --brand-soft: #DFF0F6;
+    --ok: #17803D;
+    --ok-soft: #E4F5EA;
+    --warn: #A5530B;
+    --warn-soft: #FFF1D9;
+    --bad: #B42318;
+    --bad-soft: #FDEBE9;
+    --mystery: #4B45D6;
+    --mystery-soft: #EDEEFF;
+    --f-push: #15803D;
+    --f-fric: #C62828;
+    --f-normal: #0B6BCB;
+    --f-weight: #7B3FE4;
+    --f-net: #B45309;
+    --f-vel: #0A7A91;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(16, 32, 43, .06), 0 8px 22px rgba(16, 32, 43, .06);
+    --font-display: 'Lexend', 'Segoe UI', system-ui, sans-serif;
+    --font-body: 'Atkinson Hyperlegible', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', Consolas, 'Courier New', monospace;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0;
+    padding: 12px 16px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; }
+  p { margin: 0; }
+  :focus-visible { outline: 3px solid #2B8FD6; outline-offset: 2px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .container { max-width: 1440px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+  svg.ico { width: 1.05em; height: 1.05em; flex: none; }
+
+  /* Encabezado */
+  .top {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+    background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--radius);
+    padding: 10px 16px; box-shadow: var(--shadow);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .brand-icon {
+    width: 40px; height: 40px; border-radius: 10px; flex: none;
+    background: var(--brand); color: #fff; display: grid; place-items: center;
+  }
+  .brand-icon svg { width: 24px; height: 24px; }
+  .brand h1 { font-size: 1.18rem; font-weight: 700; color: var(--brand-dark); line-height: 1.15; }
+  .brand p { margin-top: 2px; font-size: .88rem; color: var(--ink-2); }
+  .state-pill {
+    padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: .88rem;
+    border: 1.5px solid transparent; transition: background .2s, color .2s;
+  }
+  .state-pill.hidden-pred { background: var(--mystery-soft); color: var(--mystery); border: 1.5px dashed #8D89EE; }
+  .state-pill.rest-eq { background: #E3E9EE; color: #2D4252; }
+  .state-pill.motion-eq { background: var(--ok-soft); color: #0F5E2B; border-color: #8ED0A5; }
+  .state-pill.accel { background: var(--warn-soft); color: #7A3B03; border-color: #EDBF77; }
+  .state-pill.brake { background: var(--bad-soft); color: #8A1A12; border-color: #EDA39D; }
+
+  /* Resumen del experimento */
+  .brief {
+    background: var(--surface); border: 1px solid var(--line-2); border-left: 6px solid var(--brand);
+    border-radius: var(--radius); padding: 10px 16px; box-shadow: var(--shadow);
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; align-items: center;
+  }
+  .brief.explore { border-left-color: #C98A12; background: #FFFBF1; }
+  .brief-main { flex: 1; min-width: 280px; }
+  .brief-eyebrow { font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); }
+  .brief.explore .brief-eyebrow { color: var(--warn); }
+  .brief h2 { font-size: 1.15rem; font-weight: 700; margin-top: 1px; display: inline-block; margin-right: 10px; }
+  .brief-idea { display: inline-block; font-size: .88rem; color: var(--ink-2); }
+  .brief-idea strong { color: var(--ink); }
+  .brief-what { margin-top: 4px; font-size: .95rem; max-width: 90ch; }
+  .data-chips { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .dchip {
+    display: inline-flex; align-items: baseline; gap: 5px; padding: 3px 10px; border-radius: 999px;
+    background: var(--surface-2); border: 1.5px solid var(--line); font-size: .84rem;
+  }
+  .dchip b { font-weight: 700; }
+  .dchip em { font-style: normal; font-size: .78rem; color: var(--ink-3); }
+  .dchip.change { background: var(--brand-soft); border-color: #7FBBD2; }
+  .dchip.change em { color: var(--brand-dark); font-weight: 700; }
+
+  /* Cuadrícula principal compacta y sin huecos */
+  .workspace {
+    display: grid; gap: 12px; align-items: start;
+    grid-template-columns: 420px minmax(0, 1fr);
+    grid-template-areas: "steps right";
+  }
+  #stepsCol { grid-area: steps; display: flex; flex-direction: column; gap: 10px; }
+  .right-col { grid-area: right; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .bottom-split {
+    display: grid; gap: 10px;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: stretch;
+  }
+  @media (max-width: 1120px) {
+    .bottom-split { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 960px) {
+    .workspace { grid-template-columns: minmax(0, 1fr); grid-template-areas: "right" "steps"; }
+  }
+  @media (max-width: 760px) {
+    body { padding: 8px; }
+  }
+
+  .panel {
+    background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--radius);
+    padding: 12px 14px; box-shadow: var(--shadow); min-width: 0;
+  }
+  .panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .panel-head h3 { font-size: .98rem; font-weight: 600; color: var(--brand-dark); }
+  .panel-sub { font-size: .84rem; color: var(--ink-2); font-weight: 700; }
+  .surface-tag { font-size: .8rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); border: 1.5px solid var(--line); color: var(--ink-2); }
+  canvas { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line-2); background: #F6FAFC; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 5px 6px; margin-top: 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; background: var(--surface-2); border: 1px solid var(--line-2); padding: 2px 8px; border-radius: 999px; font-size: .8rem; font-weight: 700; color: var(--ink-2); }
+  .swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .swatch.dashed { background: repeating-linear-gradient(90deg, currentColor 0 4px, transparent 4px 7px); height: 4px; border-radius: 0; }
+  details.gloss { margin-top: 8px; border-top: 1px solid var(--line-2); padding-top: 6px; }
+  details.gloss summary { cursor: pointer; font-weight: 700; font-size: .88rem; color: var(--brand-dark); }
+  .gloss dl { margin: 6px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: .85rem; }
+  .gloss dt { font-weight: 700; white-space: nowrap; }
+  .gloss dd { margin: 0; color: var(--ink-2); }
+
+  /* Pasos */
+  .step { background: var(--surface); border: 1.5px solid var(--line-2); border-radius: var(--radius); padding: 10px 12px 11px; box-shadow: var(--shadow); }
+  .step.current { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(11, 106, 143, .12), var(--shadow); }
+  .step.waiting .step-body { display: none; }
+  .step.waiting { box-shadow: none; background: var(--surface-2); }
+  .step-head { display: flex; align-items: center; gap: 9px; }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%; flex: none; display: grid; place-items: center;
+    font: 700 .9rem var(--font-display); background: #E3EAEF; color: #2D4252;
+  }
+  .step.current .step-num { background: var(--brand); color: #fff; }
+  .step.done .step-num { background: var(--ok); color: #fff; }
+  .step-head h3 { font-size: .96rem; font-weight: 600; line-height: 1.15; }
+  .step-head p { font-size: .82rem; color: var(--ink-2); margin-top: 1px; }
+  .step-head .grow { flex: 1; min-width: 0; }
+  .step-body { margin-top: 9px; }
+  .lock-pill { font-size: .74rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--ok-soft); color: #0F5E2B; white-space: nowrap; }
+  .lock-pill.locked { background: var(--bad-soft); color: #8A1A12; }
+
+  .var { border: 1.5px solid var(--line-2); border-radius: 10px; padding: 7px 10px 8px; margin-bottom: 7px; background: var(--surface-2); transition: border-color .15s, background .15s; }
+  .var:last-child { margin-bottom: 0; }
+  .var.unlocked { background: #fff; border-color: #7FBBD2; box-shadow: 0 2px 6px rgba(11, 106, 143, .08); }
+  .var.locked .var-name { color: var(--ink-2); }
+  .var-top { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+  .var-top label { font-size: .94rem; font-weight: 700; }
+  .var-top .sym { font-weight: 400; color: var(--ink-3); font-size: .84rem; }
+  .var-value { font: 700 1.02rem var(--font-display); color: var(--brand-dark); white-space: nowrap; }
+  .var-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 2px; }
+  .var-tag { font-size: .72rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; }
+  .var-tag.active { background: #D7ECF5; color: var(--brand-dark); }
+  .var-tag.fixed { background: #E3E9EE; color: #4B5F6F; }
+  .goal-chip { font-size: .74rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: var(--warn-soft); color: #7A3B03; }
+  .goal-chip.reached { background: var(--ok-soft); color: #0F5E2B; }
+  .var-help { margin-top: 3px; font-size: .8rem; color: var(--ink-2); line-height: 1.25; }
+  .slider-row { display: flex; align-items: center; gap: 6px; margin-top: 5px; }
+  .step-btn {
+    width: 32px; height: 32px; border-radius: 8px; flex: none; border: 1.5px solid var(--line);
+    background: #fff; font: 700 1.1rem var(--font-body); color: var(--ink); cursor: pointer; line-height: 1;
+  }
+  .step-btn:hover:not(:disabled) { background: var(--brand-soft); border-color: var(--brand); }
+  .step-btn:disabled { opacity: .4; cursor: not-allowed; }
+  input[type=range] { width: 100%; height: 24px; accent-color: var(--brand); cursor: pointer; }
+  input[type=range]:disabled { cursor: not-allowed; }
+  .slider-scale { display: flex; justify-content: space-between; gap: 6px; padding: 0 38px; font-size: .74rem; color: var(--ink-3); }
+
+  .pred-group { border: 0; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; min-width: 0; }
+  .pred-card { position: relative; display: grid; grid-template-columns: auto 1fr; gap: 2px 7px; align-items: center; padding: 7px 8px; border: 2px solid var(--line); border-radius: 10px; background: #fff; cursor: pointer; transition: border-color .15s, background .15s; min-width: 0; }
+  .pred-card:hover { border-color: #8CC3D9; }
+  .pred-card input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .pred-card:has(input:checked) { border-color: var(--mystery); background: var(--mystery-soft); }
+  .pred-card:has(input:focus-visible) { outline: 3px solid #2B8FD6; outline-offset: 2px; }
+  .pred-icon { grid-row: 1 / span 2; width: 30px; height: 30px; color: var(--mystery); }
+  .pred-card strong { font-size: .86rem; line-height: 1.15; align-self: end; }
+  .pred-card small { font-size: .74rem; color: var(--ink-2); line-height: 1.2; }
+  .pred-group.locked .pred-card { cursor: not-allowed; opacity: .75; }
+  .pred-group.locked .pred-card:has(input:checked) { opacity: 1; }
+  @media (max-width: 480px) { .pred-group { grid-template-columns: 1fr; } }
+
+  .calc { margin-top: 8px; padding: 8px 10px; background: var(--warn-soft); border: 1.5px solid #EDC98A; border-radius: 10px; }
+  .calc label { display: block; font-weight: 700; font-size: .86rem; color: #6B3203; margin-bottom: 5px; }
+  .calc input[type=text] { width: 100%; padding: 7px 10px; border-radius: 8px; border: 1.5px solid #D5B27A; font: 700 .98rem var(--font-body); background: #fff; color: var(--ink); }
+  .calc input[type=text]:disabled { background: #F1EBDF; color: #4B5F6F; cursor: not-allowed; }
+  .calc .note { margin-top: 4px; font-size: .76rem; color: #6B4A1F; }
+
+  .obs-bar { height: 9px; border-radius: 999px; background: #DDE5EB; overflow: hidden; }
+  .obs-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #0B6A8F, #17803D); transition: width .08s linear; }
+  .obs-row { display: flex; justify-content: space-between; margin-top: 3px; font-size: .8rem; font-weight: 700; color: var(--ink-2); }
+  .obs-status { margin-top: 5px; font-size: .86rem; color: var(--ink); min-height: 2.3em; line-height: 1.3; }
+  .actions { display: grid; grid-template-columns: 1fr 1.25fr .9fr; gap: 6px; margin-top: 8px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 9px; padding: 9px 8px; font: 700 .9rem var(--font-body); cursor: pointer; transition: background .15s; min-width: 0; }
+  .btn-start { background: var(--ok); color: #fff; }
+  .btn-start:hover:not(:disabled) { background: #0F6A30; }
+  .btn-save { background: var(--brand); color: #fff; }
+  .btn-save:hover:not(:disabled) { background: var(--brand-dark); }
+  .btn-clear { background: #E3EAEF; color: #2D4252; }
+  .btn-clear:hover { background: #D2DCE3; }
+  .btn:disabled { background: #D5DEE5; color: #66798A; cursor: not-allowed; }
+
+  .result { margin-top: 8px; padding: 8px 10px; border-radius: 9px; font-size: .86rem; }
+  .result.ok { background: var(--ok-soft); border: 1.5px solid var(--ok); color: #0B4A22; }
+  .result.warn { background: var(--warn-soft); border: 1.5px solid #D9962F; color: #5E2C03; }
+  .next-row { margin-top: 8px; }
+  .btn-next { width: 100%; background: var(--ok); border: 2px solid var(--ok); color: #fff; }
+  .btn-next:hover { background: #0F6A30; }
+
+  .hint-btn { background: #fff; color: #5A31B8; border: 1.5px solid #C9B6F2; border-radius: 999px; padding: 3px 10px; font: 700 .8rem var(--font-body); cursor: pointer; }
+  .hint-btn:hover { background: #F0EAFC; }
+  .hint-box { margin-top: 6px; background: #F5F0FD; border-left: 4px solid #7B3FE4; padding: 7px 10px; border-radius: 8px; font-size: .84rem; color: #3E2380; }
+  .explain-q { margin-top: 6px; font-weight: 700; font-size: .9rem; }
+  textarea { width: 100%; margin-top: 6px; min-height: 68px; resize: vertical; padding: 8px 10px; border-radius: 9px; border: 1.5px solid #C9B6F2; font: 400 .92rem var(--font-body); color: var(--ink); background: #fff; }
+  .explain-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+  .btn-explain { background: #6D3FD0; color: #fff; padding: 8px 12px; }
+  .btn-explain:hover { background: #5A31B8; }
+  .explain-status { font-size: .82rem; font-weight: 700; color: #4B2A99; }
+
+  /* Números y ecuación */
+  .readouts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 760px) { .readouts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .readout.wide { grid-column: 1 / -1; } }
+  .readout { background: var(--surface); border: 1px solid var(--line-2); border-radius: 11px; padding: 8px 10px; box-shadow: var(--shadow); min-width: 0; }
+  .readout span { display: flex; justify-content: space-between; gap: 4px; font-size: .8rem; font-weight: 700; color: var(--ink-2); }
+  .readout span i { font-style: normal; font-weight: 400; color: var(--ink-3); }
+  .readout strong { display: block; margin-top: 2px; font: 700 1.2rem var(--font-display); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .readout.mystery { background: var(--mystery-soft); border-color: #C8C5F7; }
+  .readout.mystery strong { color: var(--mystery); }
+
+  .equation {
+    background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius);
+    padding: 12px 14px; box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: center;
+  }
+  .equation.revealed { background: var(--ok-soft); border-color: #8ED0A5; }
+  .eq-title { font: 600 .95rem var(--font-display); color: var(--brand-dark); }
+  .equation.revealed .eq-title { color: #0F5E2B; }
+  .eq-formula { margin-top: 8px; font: 500 .96rem/1.55 var(--font-mono); color: var(--ink); overflow-wrap: anywhere; }
+  .eq-formula .net { color: var(--f-net); font-weight: 700; }
+  .eq-formula .acc { color: var(--brand-dark); font-weight: 700; }
+
+  /* Cuaderno de resultados */
+  .notebook-wrap { overflow-x: auto; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; min-width: 820px; }
+  th, td { border-bottom: 1px solid var(--line-2); padding: 9px 8px; text-align: center; vertical-align: middle; }
+  th { background: var(--surface-2); color: var(--ink-2); font-size: .8rem; font-weight: 700; line-height: 1.2; }
+  td.left, th.left { text-align: left; }
+  td.exp-cell { max-width: 280px; font-size: .88rem; }
+  td.exp-cell.pending { color: var(--ink-3); font-style: italic; }
+  td.empty { color: var(--ink-3); padding: 22px 8px; font-style: italic; }
+  .tag-exp { display: inline-block; padding: 2px 9px; border-radius: 6px; font-weight: 700; font-size: .84rem; background: var(--brand-soft); color: var(--brand-dark); white-space: nowrap; }
+  .tag-exp.free { background: var(--warn-soft); color: #7A3B03; }
+  .table-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
+  .export-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-outline { padding: 9px 14px; border-radius: 10px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); font: 700 .9rem var(--font-body); cursor: pointer; }
+  .btn-outline:hover { border-color: var(--brand); color: var(--brand-dark); background: var(--brand-soft); }
+
+  .toast { position: fixed; right: 16px; bottom: 16px; max-width: 380px; z-index: 9999; background: #10202B; color: #F4F8FA; padding: 12px 16px; border-radius: 12px; font-size: .93rem; font-weight: 700; border-left: 5px solid #55B7DD; box-shadow: 0 10px 28px rgba(16, 32, 43, .28); opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity .22s, transform .22s; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.ok { border-left-color: #4FCB7E; }
+  .toast.warn { border-left-color: #F2AE46; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+  .incline-hero { background: linear-gradient(135deg, #E7F4F8, #FFFFFF); border: 1px solid #B9D9E4; border-left: 6px solid var(--brand); border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow); }
+  .incline-hero h2 { color: var(--brand-dark); font-size: 1.35rem; margin: 2px 0 6px; }
+  .incline-hero p { max-width: 95ch; color: var(--ink-2); }
+  .incline-layout { display: grid; grid-template-columns: minmax(290px, .9fr) minmax(0, 1.1fr); gap: 12px; align-items: start; }
+  @media (max-width: 920px) { .incline-layout { grid-template-columns: minmax(0, 1fr); } }
+  .inc-section-title { color: var(--brand-dark); font-size: 1rem; margin: 6px 0; }
+  .inc-poe { background: var(--brand-soft); border: 1px solid #A6CFDE; border-radius: 10px; padding: 9px 11px; color: var(--brand-dark); font-weight: 700; margin-bottom: 9px; }
+  .inc-protocol-cards { display: grid; gap: 7px; margin: 8px 0 12px; }
+  .inc-protocol-card { background: var(--surface-2); border: 1px solid var(--line-2); border-radius: 9px; padding: 8px 10px; }
+  .inc-protocol-card h4 { color: var(--brand-dark); font-size: .88rem; margin-bottom: 2px; }
+  .inc-protocol-card p { color: var(--ink-2); font-size: .85rem; }
+  .inc-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .inc-control { display: grid; gap: 4px; padding: 8px 9px; border: 1px solid var(--line-2); border-radius: 9px; background: #fff; }
+  .inc-control label { font-weight: 700; font-size: .88rem; }
+  .inc-control output { color: var(--brand-dark); font-weight: 700; }
+  .inc-control input[type=range] { width: 100%; accent-color: var(--brand); }
+  .inc-control select { width: 100%; }
+  .inc-static { margin: 7px 0; padding: 7px 9px; border-radius: 8px; background: var(--surface-2); font-weight: 700; color: var(--ink-2); }
+  .inc-run-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .inc-run-row .btn-big { align-self: auto; }
+  .inc-status { color: var(--ink-2); font-size: .9rem; }
+  .inc-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin-top: 9px; }
+  .inc-metric { background: var(--surface-2); border: 1px solid var(--line-2); border-radius: 9px; padding: 7px 9px; }
+  .inc-metric span { display: block; color: var(--ink-2); font-size: .78rem; }
+  .inc-metric strong { display: block; font-size: .97rem; color: var(--ink); }
+  .inc-result { border-left: 5px solid var(--brand); background: var(--surface-2); padding: 11px 13px; border-radius: 10px; }
+  .inc-result h3 { color: var(--brand-dark); margin-bottom: 4px; }
+  .inc-result p { margin: 4px 0; }
+  .inc-result textarea { width: 100%; min-height: 90px; margin: 7px 0; }
+  .inc-record-wrap { overflow-x: auto; }
+  .inc-records { border-collapse: collapse; width: 100%; min-width: 980px; font-size: .82rem; }
+  .inc-records th, .inc-records td { text-align: left; vertical-align: top; border-bottom: 1px solid var(--line-2); padding: 7px 8px; }
+  .inc-records th { background: var(--surface-2); color: var(--ink-2); }
+  .inc-notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 760px) { .inc-notes { grid-template-columns: minmax(0, 1fr); } .inc-controls { grid-template-columns: minmax(0, 1fr); } .inc-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  /* Pantallas */
+  .screen { display: flex; flex-direction: column; gap: 12px; }
+  .btn-back {
+    display: inline-flex; align-items: center; gap: 6px; font: 600 .92rem var(--font-body); cursor: pointer;
+    padding: 8px 13px; border-radius: 10px; border: 1.5px solid var(--line); background: #fff; color: var(--ink-2);
+  }
+  .btn-back:hover { border-color: var(--brand); color: var(--brand-dark); }
+  .top-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .screen-title { font-size: 1.45rem; font-weight: 700; color: var(--brand-dark); }
+  .screen-sub { color: var(--ink-2); margin-top: 3px; max-width: 70ch; }
+
+  .home-hero { text-align: center; padding: 14px 8px 4px; }
+  .home-hero h2 { font-size: 1.8rem; color: var(--brand-dark); }
+  .home-hero p { color: var(--ink-2); margin: 5px auto 0; max-width: 56ch; font-size: 1rem; }
+  .home-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  @media (max-width: 860px) { .home-grid { grid-template-columns: minmax(0, 1fr); } }
+  .home-card {
+    text-align: left; font: inherit; color: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 8px;
+    background: var(--surface); border: 2px solid var(--line-2); border-radius: 18px; padding: 20px;
+    box-shadow: var(--shadow); transition: transform .15s, border-color .15s;
+  }
+  .home-card:hover { transform: translateY(-3px); border-color: var(--brand); }
+  .home-card .hc-ico { width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; color: #fff; }
+  .home-card .hc-ico svg { width: 28px; height: 28px; }
+  .home-card.learn .hc-ico { background: var(--brand); }
+  .home-card.free .hc-ico { background: #D97706; }
+  .home-card.quiz .hc-ico { background: #0F8F6B; }
+  .home-card.book .hc-ico { background: #6D5BD0; }
+  .home-card.incline .hc-ico { background: #B45309; }
+  .home-card h3 { font-size: 1.3rem; }
+  .home-card p { color: var(--ink-2); font-size: .95rem; }
+  .hc-meta { margin-top: auto; padding-top: 6px; font-weight: 700; font-size: .9rem; color: var(--brand-dark); }
+  .hc-bar { height: 8px; border-radius: 99px; background: #E3EAEF; overflow: hidden; margin-top: 4px; }
+  .hc-bar i { display: block; height: 100%; background: var(--ok); width: 0; transition: width .3s; }
+
+  .levels { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 980px) { .levels { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 420px) { .levels { grid-template-columns: minmax(0, 1fr); } }
+  .level-card {
+    position: relative; text-align: center; font: inherit; color: inherit; cursor: pointer;
+    background: var(--surface); border: 2px solid var(--line-2); border-radius: 16px; padding: 18px 12px 14px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: var(--shadow);
+    transition: transform .15s, border-color .15s;
+  }
+  .level-card:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--brand); }
+  .level-card .lv-num {
+    width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
+    font: 700 1.6rem var(--font-display); background: var(--brand-soft); color: var(--brand-dark);
+  }
+  .level-card h3 { font-size: 1.12rem; }
+  .level-card .lv-state { font-size: .86rem; color: var(--ink-2); min-height: 2.4em; }
+  .level-card.done { border-color: #8ED0A5; }
+  .level-card.done .lv-num { background: var(--ok); color: #fff; }
+  .level-card.current { border-color: var(--brand); }
+  .level-card.current .lv-num { background: var(--brand); color: #fff; }
+  .level-card:disabled { cursor: not-allowed; background: #F3F6F8; box-shadow: none; }
+  .level-card:disabled .lv-num { background: #E3EAEF; color: #8497A6; }
+  .level-card:disabled h3 { color: var(--ink-3); }
+  .level-card svg { width: 24px; height: 24px; }
+  .lv-go { margin-top: 4px; font-weight: 700; font-size: .88rem; color: var(--brand-dark); }
+  .small-link { align-self: flex-start; background: none; border: 0; padding: 6px 2px; font: inherit; font-size: .88rem; color: var(--ink-3); text-decoration: underline; cursor: pointer; }
+
+  .intro-card { background: var(--surface); border: 1px solid var(--line-2); border-radius: 18px; padding: 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 14px; max-width: 840px; width: 100%; margin: 0 auto; }
+  .intro-card .eyebrow { font-weight: 700; letter-spacing: .06em; text-transform: uppercase; font-size: .82rem; color: var(--brand); }
+  .intro-card h2 { font-size: 1.85rem; }
+  .intro-card .lead { font-size: 1.04rem; }
+  .intro-key { background: var(--brand-soft); border-left: 5px solid var(--brand); border-radius: 10px; padding: 11px 14px; }
+  .intro-key b { color: var(--brand-dark); }
+  .intro-points { margin: 0; padding-left: 1.2em; display: grid; gap: 5px; }
+  .intro-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 640px) { .intro-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .intro-steps div { background: var(--surface-2); border-radius: 10px; padding: 8px 10px; font-size: .88rem; display: flex; gap: 7px; align-items: flex-start; }
+  .intro-steps b { display: grid; place-items: center; width: 21px; height: 21px; flex: none; border-radius: 50%; background: var(--brand); color: #fff; font-size: .8rem; }
+  .btn-big { align-self: flex-start; font: 700 1.05rem var(--font-display); background: var(--brand); color: #fff; border: 0; border-radius: 12px; padding: 13px 24px; cursor: pointer; }
+  .btn-big:hover { background: var(--brand-dark); }
+  .nb-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nb-count { font-weight: 700; color: var(--ink-2); }
+  .advance-bar {
+    position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 50;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: center;
+    background: #0F5E2B; color: #fff; padding: 12px 14px 12px 20px; border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(16,32,43,.35); max-width: calc(100vw - 24px);
+  }
+  .adv-text { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.05rem; }
+  .adv-check { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #fff; color: #0F5E2B; }
+  .adv-btn { font: 700 1.05rem var(--font-display); background: #fff; color: #0F5E2B; border: 0; border-radius: 11px; padding: 11px 20px; cursor: pointer; }
+  .adv-btn:hover { background: #E4F5EA; }
+  #step4, #nextRow4 { display: none !important; }
+
+  /* ---------- Preguntas ---------- */
+  .quiz-card { max-width: 820px; width: 100%; margin: 0 auto; background: var(--surface); border: 1px solid var(--line-2); border-radius: 18px; padding: 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 16px; }
+  .quiz-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 700; color: var(--ink-2); }
+  .quiz-prog { height: 8px; border-radius: 99px; background: #E3EAEF; overflow: hidden; }
+  .quiz-prog i { display: block; height: 100%; background: var(--brand); width: 0; transition: width .25s; }
+  .quiz-tag { font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); font-weight: 700; }
+  .quiz-q { font: 700 1.3rem var(--font-display); line-height: 1.3; }
+  .quiz-opts { display: grid; gap: 10px; }
+  .quiz-opt { text-align: left; font: inherit; font-size: 1.02rem; cursor: pointer; padding: 13px 16px; border-radius: 12px; border: 2px solid var(--line); background: #fff; display: flex; gap: 12px; align-items: flex-start; }
+  .quiz-opt:hover:not(:disabled) { border-color: var(--brand); background: var(--brand-soft); }
+  .quiz-opt .ltr { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: #E3EAEF; font-weight: 700; font-size: .9rem; }
+  .quiz-opt:disabled { cursor: default; color: var(--ink); }
+  .quiz-opt.right { border-color: #2E9B58; background: var(--ok-soft); }
+  .quiz-opt.right .ltr { background: var(--ok); color: #fff; }
+  .quiz-opt.wrong { border-color: #D9534F; background: var(--bad-soft); }
+  .quiz-opt.wrong .ltr { background: var(--bad); color: #fff; }
+  .quiz-expl { border-radius: 12px; padding: 12px 16px; background: var(--surface-2); border-left: 5px solid var(--brand); }
+  .quiz-expl.ok { border-left-color: var(--ok); background: var(--ok-soft); }
+  .quiz-expl.bad { border-left-color: var(--bad); background: var(--bad-soft); }
+  .quiz-result { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+  .quiz-score { font: 700 3.2rem var(--font-display); color: var(--brand-dark); line-height: 1; }
+  .quiz-review { text-align: left; width: 100%; display: grid; gap: 8px; }
+  .quiz-review div { background: var(--surface-2); border-radius: 10px; padding: 10px 14px; font-size: .95rem; }
+  .quiz-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .btn-sec { font: 600 1rem var(--font-body); padding: 13px 22px; border-radius: 12px; border: 2px solid var(--line); background: #fff; cursor: pointer; }
+  .btn-sec:hover { border-color: var(--brand); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Encabezado -->
+  <header class="top">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="13" y="11" width="15" height="15" rx="2.5"/><path d="M13 18.5h15M20.5 11v15"/><path d="M2 18.5h6.5M5.5 14.5l3.8 4-3.8 4"/><path d="M3 29h27"/></svg>
+      </div>
+      <div>
+        <h1>Laboratorio de Fuerzas y Movimiento</h1>
+        <p id="topSub">Predecir y Observar</p>
+      </div>
+    </div>
+    <div class="top-right">
+      <div id="eqBadge" class="state-pill hidden-pred" role="status" hidden>Primero predice, luego pulsa «Iniciar»</div>
+      <button type="button" class="btn-back" id="btnBack" hidden>← Menú</button>
+    </div>
+  </header>
+
+  <!-- Inicio -->
+  <section class="screen" id="screenHome">
+    <div class="home-hero">
+      <h2>¿Qué quieres hacer hoy?</h2>
+      <p>Empuja una caja, predice qué va a pasar y compruébalo con la gráfica.</p>
+    </div>
+    <div class="home-grid">
+      <button type="button" class="home-card learn" id="goLearn">
+        <span class="hc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-4 9 4-9 4-9-4z"/><path d="M7 10.5V15c0 1.4 2.2 3 5 3s5-1.6 5-3v-4.5"/></svg></span>
+        <h3>Aprender</h3>
+        <p>5 niveles guiados, cada uno con una explicación corta. Para entrar a un nivel debes completar el anterior.</p>
+        <span class="hc-meta" id="learnMeta"></span>
+        <span class="hc-bar"><i id="learnBar"></i></span>
+      </button>
+      <button type="button" class="home-card free" id="goFree">
+        <span class="hc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span>
+        <h3>Modo libre</h3>
+        <p>Cambia la masa, el empuje y el roce como quieras y mira qué pasa. Sin metas ni bloqueos.</p>
+        <span class="hc-meta">Experimenta a tu ritmo</span>
+      </button>
+      <button type="button" class="home-card quiz" id="goQuiz">
+        <span class="hc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 1 1 3.7 2.4c-.8.4-1.2 1-1.2 1.8"/><path d="M12 17h.01"/></svg></span>
+        <h3>Preguntas</h3>
+        <p>10 preguntas de opción múltiple para repasar lo aprendido en los niveles y algunos conceptos básicos.</p>
+        <span class="hc-meta" id="quizMeta"></span>
+      </button>
+      <button type="button" class="home-card incline" id="goIncline">
+        <span class="hc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18L5 6z"/><rect x="10" y="11" width="5" height="5" rx="1" transform="rotate(-35 10 11)"/><path d="M7 18l4-3"/></svg></span>
+        <h3>Plano inclinado</h3>
+        <p>Investiga cómo el ángulo y la fricción cambian las fuerzas y el movimiento del bloque.</p>
+        <span class="hc-meta" id="inclineMeta">3 ensayos de predicción, observación y explicación</span>
+      </button>
+      <button type="button" class="home-card book" id="goBook">
+        <span class="hc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z"/><path d="M8 20a3 3 0 0 1-3-3M9 9h6M9 13h6"/></svg></span>
+        <h3>Mi cuaderno</h3>
+        <p>Mira los resultados que ya guardaste. Puedes copiarlos o descargarlos.</p>
+        <span class="hc-meta" id="bookMeta"></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Niveles -->
+  <section class="screen" id="screenLevels" hidden>
+    <div>
+      <h2 class="screen-title">Aprender: elige un nivel</h2>
+      <p class="screen-sub">Completa cada nivel (guardando tu resultado) para abrir el siguiente. Tu avance se guarda solo.</p>
+    </div>
+    <div class="levels" id="levelsGrid"></div>
+    <button type="button" class="small-link" id="btnResetProgress">Borrar mi avance y empezar de cero</button>
+  </section>
+
+  <!-- Explicación antes del nivel -->
+  <section class="screen" id="screenIntro" hidden>
+    <article class="intro-card">
+      <div class="eyebrow" id="introEyebrow"></div>
+      <h2 id="introTitle"></h2>
+      <p class="lead" id="introLead"></p>
+      <div class="intro-key" id="introKey"></div>
+      <ul class="intro-points" id="introPoints"></ul>
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px">Cómo se hace cada nivel</div>
+        <div class="intro-steps">
+          <div><b>1</b>Prepara el experimento</div>
+          <div><b>2</b>Predice qué va a pasar</div>
+          <div><b>3</b>Observa y guarda</div>
+        </div>
+      </div>
+      <button type="button" class="btn-big" id="btnStartLevel">Empezar</button>
+    </article>
+  </section>
+
+  <!-- Laboratorio -->
+  <section class="screen" id="screenLab" hidden>
+    <section class="brief" id="brief" aria-live="polite">
+      <div class="brief-main">
+        <div class="brief-eyebrow" id="briefEyebrow"></div>
+        <h2 id="briefTitle"></h2>
+        <p class="brief-idea" id="briefIdea"></p>
+        <p class="brief-what" id="briefWhat"></p>
+        <div class="data-chips" id="dataChips"></div>
+      </div>
+    </section>
+
+    <!-- Zona principal -->
+    <main class="workspace">
+
+      <!-- Columna izquierda: Pasos -->
+      <div class="steps" id="stepsCol">
+
+        <article class="step" id="step1">
+          <div class="step-head">
+            <span class="step-num">1</span>
+            <div class="grow"><h3>Prepara el experimento</h3><p id="step1Sub">Cambia solo la variable marcada.</p></div>
+          </div>
+          <div class="step-body">
+            <div class="var locked" id="grpMass">
+              <div class="var-top">
+                <label for="mass"><span class="var-name">Masa de la caja</span> <span class="sym">(m)</span></label>
+                <output id="lblMass" class="var-value" for="mass">50 kg</output>
+              </div>
+              <div class="var-meta"><span id="tagMass" class="var-tag fixed">Fija</span><span id="chipMass" class="goal-chip" hidden></span></div>
+              <p class="var-help">Qué tan pesada es la caja. Con más masa cuesta más cambiar su velocidad.</p>
+              <div class="slider-row">
+                <button type="button" id="decMass" class="step-btn" aria-label="Disminuir masa" disabled>−</button>
+                <input type="range" id="mass" min="25" max="150" step="25" value="50" disabled>
+                <button type="button" id="incMass" class="step-btn" aria-label="Aumentar masa" disabled>+</button>
+              </div>
+              <div class="slider-scale"><span>25 kg</span><span>150 kg</span></div>
+            </div>
+
+            <div class="var unlocked" id="grpFapp">
+              <div class="var-top">
+                <label for="fapp"><span class="var-name">Tu empuje</span> <span class="sym">(F_ap)</span></label>
+                <output id="lblFapp" class="var-value" for="fapp">0 N</output>
+              </div>
+              <div class="var-meta"><span id="tagFapp" class="var-tag active">Tú lo cambias</span><span id="chipFapp" class="goal-chip" hidden></span></div>
+              <p class="var-help">La fuerza con la que empujas la caja. Positivo: derecha. Negativo: izquierda.</p>
+              <div class="slider-row">
+                <button type="button" id="decFapp" class="step-btn" aria-label="Disminuir empuje">−</button>
+                <input type="range" id="fapp" min="-300" max="300" step="25" value="0">
+                <button type="button" id="incFapp" class="step-btn" aria-label="Aumentar empuje">+</button>
+              </div>
+              <div class="slider-scale"><span>← izquierda</span><span>derecha →</span></div>
+            </div>
+
+            <div class="var locked" id="grpFric">
+              <div class="var-top">
+                <label for="fric"><span class="var-name">Roce máximo del suelo</span> <span class="sym">(f)</span></label>
+                <output id="lblFric" class="var-value" for="fric">100 N</output>
+              </div>
+              <div class="var-meta"><span id="tagFric" class="var-tag fixed">Fija</span><span id="chipFric" class="goal-chip" hidden></span></div>
+              <p class="var-help">Cuánto se opone el suelo al movimiento como máximo. 0 N es hielo liso.</p>
+              <div class="slider-row">
+                <button type="button" id="decFric" class="step-btn" aria-label="Disminuir roce" disabled>−</button>
+                <input type="range" id="fric" min="0" max="200" step="25" value="100" disabled>
+                <button type="button" id="incFric" class="step-btn" aria-label="Aumentar roce" disabled>+</button>
+              </div>
+              <div class="slider-scale"><span>0 N (hielo)</span><span>200 N (muy rugoso)</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="step" id="step2">
+          <div class="step-head">
+            <span class="step-num">2</span>
+            <div class="grow"><h3>Predice qué va a pasar</h3><p>Elige antes de iniciar. No hay pistas.</p></div>
+            <span id="lockBadge" class="lock-pill">Aún puedes cambiarla</span>
+          </div>
+          <div class="step-body">
+            <fieldset class="pred-group" id="predGroup">
+              <legend class="sr-only">¿Qué crees que hará la caja?</legend>
+              <label class="pred-card">
+                <input type="radio" name="pred" value="rest">
+                <svg class="pred-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="18" height="18" rx="3"/><path d="M4 31h28"/></svg>
+                <strong>Se queda quieta</strong><small>No se mueve: v = 0 y a = 0</small>
+              </label>
+              <label class="pred-card">
+                <input type="radio" name="pred" value="right">
+                <svg class="pred-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h8M3 18h12M5 24h8"/><path d="M19 11l11 7-11 7z" fill="currentColor"/></svg>
+                <strong>Acelera hacia la derecha</strong><small>Cada vez más rápido (a &gt; 0)</small>
+              </label>
+              <label class="pred-card">
+                <input type="radio" name="pred" value="left">
+                <svg class="pred-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M31 12h-8M33 18H21M31 24h-8"/><path d="M17 11L6 18l11 7z" fill="currentColor"/></svg>
+                <strong>Acelera hacia la izquierda</strong><small>a &lt; 0 (si iba a la derecha, frena)</small>
+              </label>
+              <label class="pred-card">
+                <input type="radio" name="pred" value="const">
+                <svg class="pred-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13h22M20 7l7 6-7 6"/><path d="M4 25h22M20 19l7 6-7 6" opacity=".5"/></svg>
+                <strong>Velocidad constante</strong><small>Se mueve sin acelerar (a = 0, v ≠ 0)</small>
+              </label>
+            </fieldset>
+
+            <div id="calcPanel" class="calc" hidden>
+              <label for="predAccInput">Calcula: si la fuerza neta es 200 N y la masa es 100 kg, ¿cuánto vale la aceleración (m/s²)?</label>
+              <input type="text" id="predAccInput" inputmode="decimal" autocomplete="off" placeholder="Escribe tu resultado">
+              <p class="note">Se bloquea al iniciar y se compara con tolerancia de ±0,05 m/s². Puedes usar coma o punto.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="step" id="step3">
+          <div class="step-head">
+            <span class="step-num">3</span>
+            <div class="grow"><h3>Observa y guarda</h3><p>Mira 2 segundos seguidos y guarda el resultado.</p></div>
+          </div>
+          <div class="step-body">
+            <div class="obs-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="obsBar"><div id="obsFill" class="obs-fill"></div></div>
+            <div class="obs-row"><span>Observación seguida</span><span id="obsTime">0,0 / 2,0 s</span></div>
+            <p id="obsStatus" class="obs-status" role="status" aria-live="polite"></p>
+            <div class="actions">
+              <button type="button" id="btnRun" class="btn btn-start" disabled></button>
+              <button type="button" id="btnRecord" class="btn btn-save" disabled></button>
+              <button type="button" id="btnReset" class="btn btn-clear"></button>
+            </div>
+            <div id="poeFeedback" class="result" role="status" hidden></div>
+            <div id="nextRow" class="next-row" hidden><button type="button" id="btnNext" class="btn btn-next"></button></div>
+          </div>
+        </article>
+
+        <article class="step waiting" id="step4">
+          <div class="step-head">
+            <span class="step-num">4</span>
+            <div class="grow"><h3>Explica lo que viste</h3><p id="step4Sub">Se activa cuando guardes tu resultado.</p></div>
+            <button type="button" class="hint-btn" id="hintBtn" hidden>Ver pista</button>
+          </div>
+          <div class="step-body">
+            <div id="hintBox" class="hint-box" hidden></div>
+            <p id="explainPrompt" class="explain-q"></p>
+            <textarea id="explainInput" placeholder="Escribe con tus palabras qué pasó y por qué. Usa la fuerza neta, la masa y la gráfica."></textarea>
+            <div class="explain-actions">
+              <button type="button" class="btn btn-explain" id="btnExplain">Guardar explicación</button>
+              <span id="explainStatus" class="explain-status" role="status"></span>
+            </div>
+            <div id="nextRow4" class="next-row" hidden><button type="button" id="btnNext4" class="btn btn-next"></button></div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Columna derecha: Escena, Lecturas, Gráfica + Ecuación -->
+      <div class="right-col">
+        <section class="panel" id="scenePanel">
+          <div class="panel-head">
+            <h3>La escena: la caja y sus fuerzas</h3>
+            <span class="surface-tag" id="surfaceTag">Suelo: roce medio</span>
+          </div>
+          <canvas id="simCanvas" width="620" height="245" role="img" aria-label="Caja sobre el suelo con las flechas de las fuerzas que actúan sobre ella"></canvas>
+          <div class="legend" aria-label="Leyenda de colores">
+            <span class="pill"><i class="swatch" style="background:var(--f-push)"></i>Empuje</span>
+            <span class="pill"><i class="swatch" style="background:var(--f-fric)"></i>Roce</span>
+            <span class="pill"><i class="swatch" style="background:var(--f-normal)"></i>Normal</span>
+            <span class="pill"><i class="swatch" style="background:var(--f-weight)"></i>Peso</span>
+            <span class="pill"><i class="swatch" style="background:var(--f-net)"></i>Fuerza neta</span>
+            <span class="pill" style="color:var(--f-vel)"><i class="swatch dashed"></i><span style="color:var(--ink-2)">Velocidad (punteada)</span></span>
+          </div>
+          <details class="gloss">
+            <summary>¿Qué significa cada símbolo?</summary>
+            <dl>
+              <dt style="color:var(--f-push)">Empuje (F_ap)</dt><dd>La fuerza que haces tú sobre la caja. Hacia la derecha es positiva; hacia la izquierda, negativa.</dd>
+              <dt style="color:var(--f-fric)">Roce (f)</dt><dd>La fuerza del suelo que se opone al movimiento. Con la caja quieta es roce estático y se ajusta a tu empuje hasta un máximo; en movimiento es roce cinético y vale siempre ese máximo.</dd>
+              <dt style="color:var(--f-normal)">Normal (N)</dt><dd>El suelo sostiene la caja hacia arriba. Vale lo mismo que el peso.</dd>
+              <dt style="color:var(--f-weight)">Peso (mg)</dt><dd>La gravedad tira de la caja hacia abajo (masa × 9,8 m/s²).</dd>
+              <dt style="color:var(--f-net)">Fuerza neta (ΣF)</dt><dd>La suma de todas las fuerzas horizontales. Si es cero, la velocidad no cambia.</dd>
+              <dt style="color:var(--f-vel)">Velocidad (v)</dt><dd>Qué tan rápido y hacia dónde se mueve la caja.</dd>
+              <dt>Aceleración (a)</dt><dd>Cuánto cambia la velocidad cada segundo. Es la inclinación de la línea en la gráfica.</dd>
+            </dl>
+          </details>
+        </section>
+
+        <section class="readouts" id="readouts" aria-label="Valores medidos">
+          <div class="readout"><span>Peso y normal <i>mg = N</i></span><strong id="outVert">490 N</strong></div>
+          <div class="readout mystery" id="cardFnet"><span>Fuerza neta <i>ΣF</i></span><strong id="outFnet">?</strong></div>
+          <div class="readout mystery" id="cardAcc"><span>Aceleración <i>a</i></span><strong id="outAcc">?</strong></div>
+          <div class="readout"><span>Velocidad <i>v</i></span><strong id="outVel">0,00 m/s</strong></div>
+          <div class="readout wide"><span>Tiempo <i>t</i></span><strong id="outTime">0,0 s</strong></div>
+        </section>
+
+        <div class="bottom-split">
+          <section class="panel" id="graphPanel">
+            <div class="panel-head">
+              <h3>Gráfica: velocidad en el tiempo</h3>
+              <span class="panel-sub" id="timeLabel">t = 0,0 s</span>
+            </div>
+            <canvas id="graphCanvas" width="420" height="220" role="img" aria-label="Gráfica de la velocidad de la caja contra el tiempo"></canvas>
+            <div class="legend">
+              <span class="pill">Sube = acelera</span>
+              <span class="pill">Horizontal = v constante</span>
+              <span class="pill"><i class="swatch" style="background:var(--ok)"></i>Meta 2 s</span>
+            </div>
+          </section>
+
+          <section class="equation" id="equation">
+            <div class="eq-title">Cómo se calcula (2.ª ley de Newton)</div>
+            <div class="eq-formula" id="eqFormula">Aquí aparecerá el cálculo cuando pulses «Iniciar». Piensa antes: ¿cuánto vale la suma de las fuerzas?</div>
+          </section>
+        </div>
+      </div>
+
+    </main>
+  </section>
+
+  <!-- Cuaderno de resultados -->
+  <!-- Preguntas -->
+  <section class="screen" id="screenQuiz" hidden>
+    <div class="quiz-card" id="quizBox"></div>
+  </section>
+
+  <section class="screen" id="screenIncline" hidden>
+    <header class="incline-hero">
+      <div class="eyebrow">Módulo de indagación · plano inclinado</div>
+      <h2>Fuerzas y movimiento sobre una rampa</h2>
+      <p><strong>1. Pregunta investigable:</strong> ¿Cómo influyen la variación del ángulo de la rampa (θ) y la fricción del plano en la descomposición vectorial del peso (mg sinθ y mg cosθ), determinando si un objeto resbala, acelera o permanece en equilibrio estático?</p>
+    </header>
+
+    <div class="incline-layout">
+      <section class="panel">
+        <div class="panel-head"><h3>2. Protocolo de ensayos · ciclo POE</h3><span id="incProgress" class="surface-tag">Aún no hay ensayos registrados</span></div>
+        <p class="inc-poe">Primero predice; luego observa los vectores y los valores calculados; finalmente explica la relación física con tus palabras.</p>
+        <div class="inc-control">
+          <label for="inclineTrial">Ensayo activo</label>
+          <select id="inclineTrial">
+            <option value="1">Ensayo 1 · Plano sin fricción</option>
+            <option value="2">Ensayo 2 · Fricción estática y ángulo crítico</option>
+            <option value="3">Ensayo 3 · Fuerzas equilibradas y desequilibradas</option>
+          </select>
+        </div>
+        <div class="inc-protocol-cards">
+          <article class="inc-protocol-card"><h4>Ensayo 1 · Plano sin fricción</h4><p>Varía θ y predice cómo cambian mg sinθ y la aceleración cuesta abajo. Repite con distintos ángulos y compara los registros.</p></article>
+          <article class="inc-protocol-card"><h4>Ensayo 2 · Ángulo crítico</h4><p>Mantén fija la masa y aumenta θ de grado en grado. Identifica el límite del equilibrio estático: θ<sub>crítico</sub> = tan<sup>−1</sup>(μ<sub>s</sub>). Al superarlo, el bloque comienza a deslizar.</p></article>
+          <article class="inc-protocol-card"><h4>Ensayo 3 · Equilibrio o desequilibrio</h4><p>Prueba ángulos por debajo, cerca y por encima del crítico. Compara mg sinθ con el roce estático máximo μ<sub>s</sub>N y observa qué pasa al deslizar.</p></article>
+        </div>
+        <div class="inc-static">Masa del bloque: <strong>5 kg</strong> en los tres ensayos · g = 9,8 m/s²</div>
+        <div class="inc-controls">
+          <div class="inc-control"><label for="incAngle">Ángulo de la rampa, θ</label><input type="range" id="incAngle" min="0" max="60" step="0.01" value="20"><output id="incAngleOut" for="incAngle">20°</output></div>
+          <div class="inc-control"><label for="incMuS">Fricción estática, μ<sub>s</sub></label><input type="range" id="incMuS" min="0" max="1" step="0.05" value="0.6"><output id="incMuSOut" for="incMuS">0,60</output></div>
+          <div class="inc-control"><label for="incMuK">Fricción cinética, μ<sub>k</sub></label><input type="range" id="incMuK" min="0" max="0.8" step="0.05" value="0.4"><output id="incMuKOut" for="incMuK">0,40</output></div>
+          <div class="inc-control"><label for="incPrediction">Mi predicción</label><select id="incPrediction"><option value="">Elige antes de observar…</option></select></div>
+        </div>
+        <div class="inc-run-row"><button type="button" class="btn-big" id="incRun">Observar ensayo</button><span id="incStatus" class="inc-status" role="status" aria-live="polite">Ajusta el ángulo, escribe tu predicción y observa.</span></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h3>Vectores descompuestos en ejes rotados</h3><span class="panel-sub">Paralelo y perpendicular a la rampa</span></div>
+        <canvas id="inclineCanvas" width="700" height="370" role="img" aria-label="Bloque sobre un plano inclinado con vectores del peso y sus componentes"></canvas>
+        <div class="legend" aria-label="Leyenda de vectores del plano inclinado">
+          <span class="pill"><i class="swatch" style="background:#7B3FE4"></i>Peso mg</span>
+          <span class="pill"><i class="swatch" style="background:#D97706"></i>mg sinθ</span>
+          <span class="pill"><i class="swatch" style="background:#C62828"></i>mg cosθ</span>
+          <span class="pill"><i class="swatch" style="background:#0B6BCB"></i>Normal N</span>
+          <span class="pill"><i class="swatch" style="background:#15803D"></i>Fricción</span>
+        </div>
+        <div class="inc-metrics">
+          <div class="inc-metric"><span>Paralela · mg sinθ</span><strong id="incMgSin">—</strong></div>
+          <div class="inc-metric"><span>Perpendicular · mg cosθ</span><strong id="incMgCos">—</strong></div>
+          <div class="inc-metric"><span>Normal · N</span><strong id="incNormal">—</strong></div>
+          <div class="inc-metric"><span>Roce máximo · μ<sub>s</sub>N</span><strong id="incFmax">—</strong></div>
+          <div class="inc-metric"><span>Fricción real</span><strong id="incFriction">—</strong></div>
+          <div class="inc-metric"><span>Aceleración cuesta abajo</span><strong id="incAccel">—</strong></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel inc-result" id="incResult" hidden>
+      <h3 id="incResultTitle">Resultado del ensayo</h3>
+      <p id="incResultSummary"></p>
+      <p id="incResultFormula"></p>
+      <p><strong>Ángulo crítico estimado:</strong> <span id="incCritical">—</span></p>
+      <label for="incExplanation"><strong>3. Explicación formal:</strong> relaciona mg sinθ, mg cosθ, N, μ<sub>s</sub>N y el estado observado.</label>
+      <textarea id="incExplanation" placeholder="La componente paralela del peso… La normal vale… Como mg sinθ es menor/igual/mayor que μsN…"></textarea>
+      <div class="inc-run-row"><button type="button" class="btn-big" id="incSaveExplanation">Guardar evidencia y explicación</button><span id="incExplanationStatus" class="inc-status" role="status" aria-live="polite"></span></div>
+    </section>
+
+    <div class="incline-layout">
+      <section class="panel">
+        <div class="panel-head"><h3>3. Registro de evidencias</h3><span class="panel-sub">Vectores + tabla + explicación</span></div>
+        <p class="screen-sub">Cada fila guarda el ensayo, los valores numéricos y el comportamiento. La explicación formal se añade después de observar.</p>
+        <div class="inc-record-wrap"><table class="inc-records"><thead><tr><th>Ensayo</th><th>θ</th><th>m</th><th>mg sinθ</th><th>mg cosθ</th><th>μ<sub>s</sub>N</th><th>Fricción</th><th>a</th><th>Predicción</th><th>Comportamiento</th><th>Explicación</th></tr></thead><tbody id="incLogBody"></tbody></table></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h3>4. Mediación docente</h3></div>
+        <ul class="intro-points">
+          <li>¿Qué componente del peso cambia al variar θ? ¿Qué ocurre con mg sinθ y con mg cosθ?</li>
+          <li>¿Cómo puedes reconocer en los datos el ángulo crítico y qué significa estar justo en ese límite?</li>
+          <li>Compara mg sinθ con μ<sub>s</sub>N: ¿cuándo el roce se ajusta y cuándo ya no puede mantener el equilibrio?</li>
+          <li>Después de iniciar el deslizamiento, ¿por qué la fricción pasa a depender de μ<sub>k</sub> y cómo modifica la aceleración?</li>
+          <li>¿Por qué la masa se cancela en tan(θ<sub>crítico</sub>) = μ<sub>s</sub>? ¿Qué evidencia apoya tu conclusión?</li>
+        </ul>
+      </section>
+    </div>
+    <section class="panel">
+      <div class="panel-head"><h3>Límites del modelo</h3></div>
+      <p class="screen-sub">La simulación trata el bloque como un cuerpo rígido que se desliza en dos dimensiones; supone una rampa recta y uniforme, gravedad constante, coeficientes de fricción μ<sub>s</sub> y μ<sub>k</sub> constantes, y contacto sin deformación. No representa resistencia del aire, vibraciones, irregularidades locales, rotación, vuelco ni cambios de fricción por temperatura o material. En una rampa real, estas condiciones pueden alterar el ángulo de inicio y el movimiento observado.</p>
+    </section>
+  </section>
+
+  <section class="screen" id="screenNotebook" hidden>
+    <div class="panel" id="notebook">
+      <div class="panel-head">
+        <h3>Mi cuaderno de resultados</h3>
+        <span class="nb-count" id="nbCount"></span>
+      </div>
+      <div class="notebook-wrap">
+        <table id="evidenceTable">
+          <thead>
+            <tr>
+              <th>Nivel</th>
+              <th>Masa<br>(kg)</th>
+              <th>Empuje<br>(N)</th>
+              <th>Roce<br>(N)</th>
+              <th>Fuerza neta<br>(N)</th>
+              <th>a que calculaste<br>(m/s²)</th>
+              <th>a observada<br>(m/s²)</th>
+              <th class="left">Tu predicción → lo que pasó</th>
+            </tr>
+          </thead>
+          <tbody id="logBody">
+            <tr id="emptyRow"><td class="empty" colspan="8">Todavía no hay resultados. Completa un nivel o prueba el modo libre y pulsa «Guardar resultado».</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-foot">
+        <div class="export-row nb-actions">
+          <button type="button" class="btn-outline" id="btnCopy">Copiar tabla</button>
+          <button type="button" class="btn-outline" id="btnCsv">Descargar CSV</button>
+          <button type="button" class="btn-outline" id="btnClearBook">Borrar cuaderno</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="advanceBar" class="advance-bar" hidden role="status">
+  <div class="adv-text"><span class="adv-check">✓</span><span id="advText">¡Nivel completado!</span></div>
+  <button type="button" class="adv-btn" id="btnAdvanceBar">Continuar →</button>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+
+const $ = id => document.getElementById(id);
+const simCanvas = $('simCanvas'), ctx = simCanvas.getContext('2d');
+const graphCanvas = $('graphCanvas'), gctx = graphCanvas.getContext('2d');
+const massIn = $('mass'), fappIn = $('fapp'), fricIn = $('fric');
+const predGroup = $('predGroup'), predAccIn = $('predAccInput');
+const btnRun = $('btnRun'), btnRecord = $('btnRecord'), btnReset = $('btnReset'), btnNext = $('btnNext'), btnNext4 = $('btnNext4');
+let mode = 'learn';
+const feedbackEl = $('poeFeedback');
+
+const css = getComputedStyle(document.documentElement);
+const cv = n => css.getPropertyValue(n).trim();
+const COL = {
+  push: cv('--f-push'), fric: cv('--f-fric'), normal: cv('--f-normal'), weight: cv('--f-weight'),
+  net: cv('--f-net'), vel: cv('--f-vel'), ink: cv('--ink'), ink2: cv('--ink-2'), ink3: cv('--ink-3'),
+  ok: cv('--ok'), mystery: cv('--mystery')
+};
+const CANVAS_FONT = '"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif';
+
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+    if (w < 2 * r) r = w / 2;
+    if (h < 2 * r) r = h / 2;
+    this.beginPath();
+    this.moveTo(x + r, y);
+    this.arcTo(x + w, y, x + w, y + h, r);
+    this.arcTo(x + w, y + h, x, y + h, r);
+    this.arcTo(x, y + h, x, y, r);
+    this.arcTo(x, y, x + w, y, r);
+    this.closePath();
+    return this;
+  };
+}
+
+function fmt(num, dec) {
+  if (dec === undefined) dec = 2;
+  if (!isFinite(num)) return '—';
+  if (Math.abs(num) < 0.5 * Math.pow(10, -dec)) num = 0;
+  return num.toFixed(dec).replace('.', ',');
+}
+function setText(el, text) { if (el.textContent !== text) el.textContent = text; }
+function setHTML(el, html) { if (el.innerHTML !== html) el.innerHTML = html; }
+function escapeHtml(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function parseLocaleFloat(raw) {
+  if (typeof raw !== 'string') return NaN;
+  const cleaned = raw.trim().replace(/\s+/g, '');
+  if (!/^[+-]?(\d+([.,]\d+)?|[.,]\d+)$/.test(cleaned)) return NaN;
+  const val = parseFloat(cleaned.replace(',', '.'));
+  return isFinite(val) ? val : NaN;
+}
+
+let toastTimer = null;
+function showToast(msg, type) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + (type || 'info');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 4200);
+}
+
+const g = 9.8;
+const MIN_OBS_TIME = 2.0;
+const V_EPS = 1e-3;
+const MAX_HISTORY_POINTS = 600;
+const PIXELS_PER_METER = 38;
+
+let currentMission = 1;
+let distMeters = 0, v = 0, t = 0;
+let obsElapsed = 0;
+const AUTO_EVAL_S = 15;
+let hasStartedRun = false, running = false, recordedThisRun = false, explanationSaved = false;
+let lastT = null;
+let history = [{ t: 0, v: 0 }];
+let currentRowIdx = -1;
+const STORE_KEY = 'labFuerzasMovimiento_v3';
+let saved = { done: {}, rows: [], quizBest: -1, quizDraft: null, inclineRows: [], inclineDraft: null };
+function loadSaved() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return;
+    const o = JSON.parse(raw);
+    if (o && typeof o === 'object') {
+      saved.done = (o.done && typeof o.done === 'object') ? o.done : {};
+      saved.rows = Array.isArray(o.rows) ? o.rows : [];
+      if (typeof o.quizBest === 'number') saved.quizBest = o.quizBest;
+      if (o.quizDraft && typeof o.quizDraft === 'object') saved.quizDraft = o.quizDraft;
+      if (Array.isArray(o.inclineRows)) saved.inclineRows = o.inclineRows;
+      if (o.inclineDraft && typeof o.inclineDraft === 'object') saved.inclineDraft = o.inclineDraft;
+    }
+  } catch (e) { /* sin almacenamiento: el avance se mantiene en memoria */ }
+}
+function persist() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(saved)); } catch (e) { /* sandbox sin localStorage */ }
+}
+const FREE_CFG = { m: 50, fa: 0, fk: 50, v0: 0 };
+
+const PRED = {
+  rest: { label: 'Se queda quieta' },
+  right: { label: 'Acelera hacia la derecha' },
+  left: { label: 'Acelera hacia la izquierda' },
+  const: { label: 'Velocidad constante' }
+};
+
+const VARS = {
+  mass: { name: 'Masa', unit: 'kg' },
+  fapp: { name: 'Empuje', unit: 'N' },
+  fric: { name: 'Roce máximo', unit: 'N' }
+};
+
+const MISSIONS = {
+  1: {
+    title: 'Empujón suave', question: '¿Se mueve la caja?',
+    idea: 'Fuerzas equilibradas: el roce compensa tu empuje.',
+    what: 'Una caja de <strong>50 kg</strong> está quieta en el suelo y el suelo puede oponerse con hasta <strong>100 N</strong> de roce. Sube tu empuje de 0 N hasta <strong>75 N</strong>. Antes de iniciar, predice: ¿se moverá la caja?',
+    explainQuestion: 'Empujaste con 75 N hacia la derecha y la caja no se movió. ¿Por qué?',
+    hint: 'Compara tu empuje (75 N) con el roce máximo (100 N). Mientras tu empuje no supere ese máximo, el roce del suelo se ajusta y vale lo mismo que tu empuje, pero hacia el lado contrario. Así la fuerza neta es 0 N y la caja sigue quieta.',
+    m: 50, fa: 0, fk: 100, v0: 0, targetM: 50, targetFa: 75, targetFk: 100, unlock: 'fapp'
+  },
+  2: {
+    title: 'Empujón fuerte', question: '¿Qué le pasa a la velocidad?',
+    idea: 'Fuerza neta distinta de cero: la caja acelera.',
+    what: 'Ahora el suelo es más resbaladizo: el roce máximo es de <strong>50 N</strong> y la caja sigue siendo de <strong>50 kg</strong>. Sube tu empuje de 0 N hasta <strong>150 N</strong>. Predice qué hará la caja y observa 2 s.',
+    explainQuestion: 'Con 150 N la caja empezó a acelerar en lugar de moverse con velocidad constante. ¿Por qué?',
+    hint: 'Tu empuje (150 N) es mayor que el roce (50 N), así que sobran 100 N hacia la derecha: la fuerza neta es +100 N. Una fuerza neta distinta de cero produce aceleración (a = fuerza neta ÷ masa). En la gráfica, la velocidad sube en línea recta.',
+    m: 50, fa: 0, fk: 50, v0: 0, targetM: 50, targetFa: 150, targetFk: 50, unlock: 'fapp'
+  },
+  3: {
+    title: 'Caja en marcha', question: '¿Se frena si el roce iguala al empuje?',
+    idea: '1.ª ley de Newton (inercia): sin fuerza neta, la velocidad no cambia.',
+    what: 'La caja ya viaja a <strong>4,0 m/s</strong> con un empuje de <strong>150 N</strong>, y el roce máximo es de <strong>50 N</strong>. Sube el roce máximo hasta <strong>150 N</strong>. Predice qué pasará con la velocidad y observa 2 s.',
+    explainQuestion: 'El roce llegó a 150 N, igual que el empuje. ¿Por qué la caja no se frenó y siguió a 4,00 m/s?',
+    hint: 'Mira la flecha punteada (la velocidad) y la fuerza neta (0 N). Si la fuerza neta es cero, la velocidad no cambia: un objeto que ya se mueve sigue moviéndose igual. Eso es la 1.ª ley de Newton, o inercia.',
+    m: 50, fa: 150, fk: 50, v0: 4.0, targetM: 50, targetFa: 150, targetFk: 150, unlock: 'fric'
+  },
+  4: {
+    title: 'El doble de empuje', question: '¿Cuánto más acelera?',
+    idea: '2.ª ley de Newton: más fuerza neta, más aceleración.',
+    what: 'Mantén la masa en <strong>50 kg</strong> y el roce máximo en <strong>50 N</strong>. Sube tu empuje de 150 N hasta <strong>250 N</strong>. Predice y compara la inclinación de la gráfica con la del nivel 2.',
+    explainQuestion: 'La fuerza neta pasó de +100 N (nivel 2) a +200 N con la misma masa. ¿Qué le pasó a la aceleración y a la inclinación de la gráfica?',
+    hint: 'Con la misma masa, la aceleración es proporcional a la fuerza neta (a = fuerza neta ÷ masa). Si la fuerza neta se duplica de 100 N a 200 N, la aceleración se duplica de 2,00 a 4,00 m/s² y la línea de la gráfica queda el doble de inclinada.',
+    m: 50, fa: 150, fk: 50, v0: 0, targetM: 50, targetFa: 250, targetFk: 50, unlock: 'fapp'
+  },
+  5: {
+    title: 'El doble de masa', question: '¿Y si la caja es más pesada?',
+    idea: '2.ª ley de Newton: más masa, menos aceleración (inercia).',
+    what: 'Con un empuje de <strong>250 N</strong> y un roce máximo de <strong>50 N</strong>, la fuerza neta es <strong>+200 N</strong>. Sube la masa de 50 kg hasta <strong>100 kg</strong>. Antes de iniciar, calcula la aceleración que esperas y escríbela.',
+    explainQuestion: 'Con la misma fuerza neta (+200 N) del nivel 4, pero con el doble de masa (100 kg), ¿cómo cambió la aceleración y qué significa?',
+    hint: 'La masa mide la inercia: qué tanto se resiste la caja a cambiar su velocidad. Al duplicar la masa con la misma fuerza neta de +200 N, la aceleración baja a la mitad (a = 200 ÷ 100 = 2,00 m/s²).',
+    m: 50, fa: 250, fk: 50, v0: 0, targetM: 100, targetFa: 250, targetFk: 50, unlock: 'mass'
+  }
+};
+const N_MISSIONS = 5;
+
+function isFree() { return mode === 'free'; }
+function isTelemetryRevealed() { return isFree() || hasStartedRun; }
+function getPred() { const r = predGroup.querySelector('input:checked'); return r ? r.value : ''; }
+function clearPred() { predGroup.querySelectorAll('input').forEach(r => { r.checked = false; }); }
+
+const INTRO = {
+  1: {
+    concept: 'Fuerzas equilibradas',
+    lead: 'Una fuerza es un empujón o un jalón. Cuando empujas una caja, el suelo también hace una fuerza que se opone: el <strong>roce</strong>. Si el roce es capaz de igualar tu empuje, las dos fuerzas se cancelan y la caja no se mueve.',
+    key: '<b>Fuerza neta</b> = suma de todas las fuerzas (con signo). Si la fuerza neta es <b>0 N</b> y la caja está quieta, sigue quieta.',
+    points: ['El roce tiene un máximo. Mientras tu empuje sea menor que ese máximo, el roce se ajusta y vale lo mismo que tu empuje, pero hacia el lado contrario.', 'Las fuerzas hacia la derecha cuentan positivo (+) y hacia la izquierda negativo (−).']
+  },
+  2: {
+    concept: 'Fuerza neta y aceleración',
+    lead: 'Cuando tu empuje es mayor que el roce, sobra fuerza hacia un lado. Esa fuerza que sobra es la fuerza neta y hace que la caja <strong>acelere</strong>: su velocidad cambia.',
+    key: '<b>Aceleración</b> = fuerza neta ÷ masa. Si a = 2 m/s², la velocidad aumenta 2 m/s cada segundo.',
+    points: ['En la gráfica, si la línea de la velocidad sube en línea recta, la aceleración es constante.', 'Cuanto más inclinada está la línea, más rápido cambia la velocidad.']
+  },
+  3: {
+    concept: 'Inercia (1.ª ley de Newton)',
+    lead: 'Un objeto que ya se mueve no necesita una fuerza neta para seguir moviéndose. Si todas las fuerzas se cancelan, <strong>conserva su velocidad</strong>. A eso se le llama inercia.',
+    key: 'Fuerza neta = 0 N → la velocidad <b>no cambia</b> (la gráfica queda horizontal), aunque la caja se esté moviendo.',
+    points: ['Quieto no es lo mismo que «sin fuerza neta»: una caja puede moverse a velocidad constante con fuerza neta cero.', 'Fíjate en la flecha punteada: es la velocidad de la caja.']
+  },
+  4: {
+    concept: 'Más fuerza, más aceleración',
+    lead: 'Con la misma masa, la aceleración es proporcional a la fuerza neta. Si duplicas la fuerza neta, se duplica la aceleración.',
+    key: '<b>a = ΣF ÷ m</b>. Con la misma masa: el doble de fuerza neta → el doble de aceleración.',
+    points: ['Compara la inclinación de la gráfica de este nivel con la del nivel 2.', 'Cuidado: lo que se duplica es la fuerza neta (empuje menos roce), no solo el empuje.']
+  },
+  5: {
+    concept: 'Más masa, menos aceleración',
+    lead: 'La masa mide cuánto se resiste un objeto a cambiar su velocidad (su inercia). Con la misma fuerza neta, una caja más pesada acelera menos.',
+    key: '<b>a = ΣF ÷ m</b>. Con la misma fuerza neta: el doble de masa → la mitad de aceleración.',
+    points: ['En este nivel debes calcular la aceleración antes de iniciar y escribirla.', 'Puedes usar coma o punto decimal al escribir tu resultado.']
+  }
+};
+
+function levelAvailable(n) {
+  const num = Number(n);
+  if (num <= 1) return true;
+  return Boolean(saved.done[num - 1] || saved.done[String(num - 1)]);
+}
+function doneCount() {
+  let c = 0;
+  for (let i = 1; i <= N_MISSIONS; i++) {
+    if (saved.done[i] || saved.done[String(i)]) c++;
+  }
+  return c;
+}
+
+const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+function renderLevels() {
+  const grid = $('levelsGrid');
+  grid.innerHTML = '';
+  let nextFound = false;
+  for (let i = 1; i <= N_MISSIONS; i++) {
+    const done = Boolean(saved.done[i] || saved.done[String(i)]);
+    const avail = levelAvailable(i);
+    const current = avail && !done && !nextFound;
+    if (current) nextFound = true;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'level-card' + (done ? ' done' : '') + (current ? ' current' : '');
+    b.dataset.n = i;
+    b.disabled = !avail;
+    b.innerHTML = '<span class="lv-num">' + (avail ? (done ? '✓' : i) : LOCK_SVG) + '</span>' +
+      '<h3>Nivel ' + i + '</h3>' +
+      '<span class="lv-state">' + (done ? 'Completado' : (avail ? (current ? 'Te toca' : 'Disponible') : 'Completa el nivel ' + (i - 1) + ' para abrirlo')) + '</span>' +
+      (avail ? '<span class="lv-go">' + (done ? 'Repetir' : 'Empezar') + ' →</span>' : '');
+    if (avail) b.addEventListener('click', () => openIntro(i));
+    grid.appendChild(b);
+  }
+}
+
+function renderHome() {
+  const c = doneCount();
+  setText($('learnMeta'), c === N_MISSIONS ? '¡Completaste los 5 niveles!' : (c === 0 ? 'Empieza por el nivel 1' : c + ' de ' + N_MISSIONS + ' niveles completados'));
+  $('learnBar').style.width = (c / N_MISSIONS * 100) + '%';
+  const n = saved.rows.length;
+  const quizInProgress = saved.quizDraft && Number.isInteger(saved.quizDraft.i) && saved.quizDraft.i < QUESTIONS.length;
+  setText($('quizMeta'), quizInProgress ? 'Continuar en la pregunta ' + (saved.quizDraft.i + 1) + ' de ' + QUESTIONS.length : (saved.quizBest >= 0 ? 'Mejor puntaje: ' + saved.quizBest + ' / 10' : 'Aún no lo has intentado'));
+  setText($('bookMeta'), n === 0 ? 'Aún no hay resultados' : n + (n === 1 ? ' resultado guardado' : ' resultados guardados'));
+}
+
+const SCREENS = ['Home', 'Levels', 'Intro', 'Lab', 'Notebook', 'Quiz', 'Incline'];
+let screen = 'Home';
+let introLevel = 1;
+function showScreen(name) {
+  if (screen === 'Lab' && name !== 'Lab') { running = false; }
+  screen = name;
+  SCREENS.forEach(n => { $('screen' + n).hidden = n !== name; });
+  $('advanceBar').hidden = true;
+  $('btnBack').hidden = name === 'Home';
+  $('btnBack').textContent = name === 'Levels' || name === 'Notebook' || name === 'Quiz' || name === 'Incline' ? '← Menú' : (name === 'Intro' ? '← Niveles' : (isFree() ? '← Menú' : '← Niveles'));
+  $('eqBadge').hidden = name !== 'Lab';
+  setText($('topSub'), name === 'Lab' ? (isFree() ? 'Modo libre' : 'Nivel ' + currentMission + ' de ' + N_MISSIONS) : 'Predecir y Observar');
+  if (name === 'Home') renderHome();
+  if (name === 'Levels') renderLevels();
+  if (name === 'Notebook') renderNotebook();
+  if (name === 'Quiz') startQuiz(false);
+  if (name === 'Incline') { renderInclineRecords(); updateInclineAvailability(); requestAnimationFrame(() => drawIncline()); }
+  window.scrollTo(0, 0);
+  if (name === 'Lab') requestAnimationFrame(() => { drawSim(); drawGraph(); });
+}
+function goBack() {
+  if (screen === 'Incline') showScreen('Home');
+  else if (screen === 'Lab') showScreen(isFree() ? 'Home' : 'Levels');
+  else if (screen === 'Intro') showScreen('Levels');
+  else showScreen('Home');
+}
+function openIntro(n) {
+  if (!levelAvailable(n)) return;
+  introLevel = n;
+  const it = INTRO[n];
+  setText($('introEyebrow'), 'Antes de empezar · ' + it.concept);
+  setText($('introTitle'), 'Nivel ' + n);
+  setHTML($('introLead'), it.lead);
+  setHTML($('introKey'), it.key);
+  setHTML($('introPoints'), it.points.map(p => '<li>' + escapeHtml(p) + '</li>').join(''));
+  setText($('btnStartLevel'), 'Empezar nivel ' + n);
+  showScreen('Intro');
+}
+function startLevel(n) {
+  mode = 'learn';
+  selectMission(n);
+  showScreen('Lab');
+}
+function startFree() {
+  mode = 'free';
+  selectMission(1);
+  showScreen('Lab');
+}
+
+/* ======================================================
+   Preguntas (10, opción múltiple)
+   ====================================================== */
+const QUESTIONS = [
+  { tag: 'Concepto', q: '¿Qué es la fuerza neta?', ok: 'La suma de todas las fuerzas que actúan sobre la caja, contando su signo',
+    bad: ['La fuerza más grande de todas', 'Solo el peso de la caja', 'Solo el roce del suelo'],
+    why: 'La fuerza neta es la suma de todas las fuerzas, con signo: las que van a la derecha cuentan (+) y las de la izquierda (−).' },
+  { tag: 'Nivel 1', q: 'Empujas con 75 N una caja cuyo roce máximo es 100 N. ¿Qué pasa?', ok: 'La caja se queda quieta y el roce vale 75 N',
+    bad: ['La caja acelera hacia la derecha', 'La caja se mueve a velocidad constante', 'La caja retrocede'],
+    why: 'Tu empuje no supera el roce máximo, así que el roce se ajusta a 75 N en sentido contrario. La fuerza neta es 0 N y la caja sigue quieta.' },
+  { tag: 'Nivel 2', q: 'Empujas con 150 N y el roce es de 50 N. ¿Cuánto vale la fuerza neta?', ok: '100 N hacia la derecha',
+    bad: ['200 N hacia la derecha', '150 N hacia la derecha', '0 N'],
+    why: 'Fuerza neta = empuje − roce = 150 N − 50 N = 100 N hacia la derecha.' },
+  { tag: 'Nivel 2', q: 'Una caja de 50 kg tiene una fuerza neta de 100 N. ¿Cuál es su aceleración?', ok: '2 m/s²',
+    bad: ['0,5 m/s²', '5 m/s²', '150 m/s²'],
+    why: 'a = fuerza neta ÷ masa = 100 N ÷ 50 kg = 2 m/s². La velocidad aumenta 2 m/s cada segundo.' },
+  { tag: 'Nivel 3', q: 'Una caja ya viaja a 4 m/s y la fuerza neta es 0 N. ¿Qué ocurre con su velocidad?', ok: 'Se mantiene en 4 m/s',
+    bad: ['Se frena poco a poco hasta detenerse', 'Aumenta cada vez más', 'Baja a 0 m/s de inmediato'],
+    why: 'Sin fuerza neta no hay aceleración: la velocidad no cambia. Esa es la inercia (1.ª ley de Newton).' },
+  { tag: 'Concepto', q: '¿Qué es la inercia?', ok: 'La tendencia de un objeto a mantener su movimiento o su reposo',
+    bad: ['Una fuerza que empuja siempre hacia arriba', 'Un tipo de roce', 'La velocidad máxima de un objeto'],
+    why: 'La inercia es la resistencia de un objeto a cambiar su velocidad. Mientras más masa, más inercia.' },
+  { tag: 'Nivel 4', q: 'Con la misma masa, duplicas la fuerza neta. ¿Qué pasa con la aceleración?', ok: 'Se duplica',
+    bad: ['Se reduce a la mitad', 'Queda igual', 'Se hace cero'],
+    why: 'La aceleración es proporcional a la fuerza neta (a = ΣF ÷ m): el doble de fuerza neta, el doble de aceleración.' },
+  { tag: 'Nivel 5', q: 'Con la misma fuerza neta, duplicas la masa de la caja. ¿Qué pasa con la aceleración?', ok: 'Se reduce a la mitad',
+    bad: ['Se duplica', 'Queda igual', 'Se hace cero'],
+    why: 'A mayor masa, menor aceleración: a = ΣF ÷ m. Con el doble de masa, la aceleración baja a la mitad.' },
+  { tag: 'Gráfica', q: 'En la gráfica de velocidad contra tiempo, la línea sube en diagonal. ¿Qué significa?', ok: 'La caja está acelerando',
+    bad: ['La caja está quieta', 'La velocidad es constante', 'La fuerza neta es 0 N'],
+    why: 'Si la velocidad aumenta de forma pareja, hay aceleración constante. Una línea horizontal significaría velocidad constante.' },
+  { tag: 'Concepto', q: 'Una caja de 50 kg está en el suelo (g ≈ 9,8 m/s²). ¿Cuánto vale su peso aproximadamente?', ok: '490 N',
+    bad: ['50 N', '5 N', '4 900 N'],
+    why: 'Peso = masa × gravedad = 50 kg × 9,8 m/s² = 490 N. La fuerza normal del suelo vale lo mismo y apunta hacia arriba.' }
+];
+let quiz = null;
+function shuffle(a) { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; }
+$('goQuiz').addEventListener('click', () => showScreen('Quiz'));
+
+// La prueba guarda pregunta, orden de opciones y respuestas para poder reanudarla.
+function makeQuizDraft() {
+  return { i: 0, opts: QUESTIONS.map(q => shuffle([{ t: q.ok, ok: true }].concat(q.bad.map(t => ({ t, ok: false }))))), answers: QUESTIONS.map(() => null) };
+}
+function normalizeQuizDraft(draft) {
+  if (!draft || !Number.isInteger(draft.i) || draft.i < 0 || draft.i >= QUESTIONS.length || !Array.isArray(draft.opts) || !Array.isArray(draft.answers)) return null;
+  const opts = QUESTIONS.map((q, i) => {
+    const allowed = [q.ok].concat(q.bad), row = draft.opts[i];
+    if (!Array.isArray(row) || row.length !== 4 || row.some(o => !o || !allowed.includes(o.t)) || row.filter(o => o.t === q.ok).length !== 1)
+      return shuffle([{ t: q.ok, ok: true }].concat(q.bad.map(t => ({ t, ok: false }))));
+    return row.map(o => ({ t: o.t, ok: o.t === q.ok }));
+  });
+  const answers = QUESTIONS.map((_, i) => Number.isInteger(draft.answers[i]) && draft.answers[i] >= 0 && draft.answers[i] < 4 ? draft.answers[i] : null);
+  if (answers.slice(0, draft.i).some(a => a === null)) return null;
+  return { i: draft.i, opts, answers };
+}
+function quizScore() {
+  return quiz.answers.reduce((n, answer, i) => n + (answer !== null && quiz.opts[i][answer].ok ? 1 : 0), 0);
+}
+function quizWrong() {
+  return quiz.answers.reduce((rows, answer, i) => {
+    if (answer !== null && !quiz.opts[i][answer].ok) rows.push({ q: QUESTIONS[i].q, ok: QUESTIONS[i].ok, why: QUESTIONS[i].why });
+    return rows;
+  }, []);
+}
+function saveQuizDraft() {
+  saved.quizDraft = { i: quiz.i, opts: quiz.opts.map(row => row.map(o => ({ t: o.t, ok: o.ok }))), answers: quiz.answers.slice() };
+  persist();
+}
+function startQuiz(forceNew) {
+  quiz = !forceNew ? normalizeQuizDraft(saved.quizDraft) : null;
+  if (!quiz) { quiz = makeQuizDraft(); saveQuizDraft(); }
+  renderQuiz();
+}
+function renderQuiz() {
+  const box = $('quizBox');
+  if (quiz.i >= QUESTIONS.length) { renderQuizResult(); return; }
+  const q = QUESTIONS[quiz.i], labels = ['A', 'B', 'C', 'D'], selected = quiz.answers[quiz.i], opts = quiz.opts[quiz.i];
+  box.innerHTML =
+    '<div class="quiz-top"><span>Pregunta ' + (quiz.i + 1) + ' de ' + QUESTIONS.length + '</span><span>Aciertos: ' + quizScore() + '</span></div>' +
+    '<div class="quiz-prog"><i style="width:' + (quiz.i / QUESTIONS.length * 100) + '%"></i></div>' +
+    '<div><div class="quiz-tag">' + escapeHtml(q.tag) + '</div><div class="quiz-q">' + escapeHtml(q.q) + '</div></div>' +
+    '<div class="quiz-opts" id="quizOpts">' + opts.map((o, k) =>
+      '<button type="button" class="quiz-opt' + (selected !== null && o.ok ? ' right' : '') + (selected === k && !o.ok ? ' wrong' : '') + '" data-k="' + k + '"' + (selected !== null ? ' disabled' : '') + '><span class="ltr">' + labels[k] + '</span><span>' + escapeHtml(o.t) + '</span></button>').join('') + '</div>' +
+    '<div id="quizFb"></div>';
+  if (selected === null) {
+    box.querySelectorAll('.quiz-opt').forEach(b => b.addEventListener('click', () => answerQuiz(+b.dataset.k)));
+    return;
+  }
+  const good = opts[selected].ok;
+  $('quizFb').innerHTML = '<div class="quiz-expl ' + (good ? 'ok' : 'bad') + '"><strong>' + (good ? '¡Correcto!' : 'Casi. La respuesta correcta es: «' + escapeHtml(q.ok) + '».') + '</strong><br>' + escapeHtml(q.why) + '</div>' +
+    '<div class="quiz-btns" style="margin-top:12px"><button type="button" class="btn-big" id="quizNext">' + (quiz.i === QUESTIONS.length - 1 ? 'Ver mi resultado' : 'Siguiente pregunta →') + '</button></div>';
+  $('quizNext').addEventListener('click', () => {
+    quiz.i++;
+    if (quiz.i >= QUESTIONS.length) { saved.quizDraft = null; persist(); renderQuizResult(); }
+    else { saveQuizDraft(); renderQuiz(); }
+    renderHome();
+    window.scrollTo(0, 0);
+  });
+  $('quizNext').focus();
+}
+function answerQuiz(k) {
+  if (!quiz || quiz.answers[quiz.i] !== null || !Number.isInteger(k) || k < 0 || k > 3) return;
+  quiz.answers[quiz.i] = k;
+  saveQuizDraft();
+  renderQuiz();
+  renderHome();
+}
+function renderQuizResult() {
+  const n = QUESTIONS.length, sc = quizScore(), wrong = quizWrong();
+  if (!(saved.quizBest >= sc)) saved.quizBest = sc;
+  saved.quizDraft = null;
+  persist();
+  const msg = sc === n ? '¡Perfecto! Dominas los conceptos.' : (sc >= 8 ? '¡Muy bien! Casi lo tienes todo.' : (sc >= 5 ? 'Vas bien. Repasa lo que fallaste y vuelve a intentarlo.' : 'Repasa los niveles y vuelve a intentarlo, ¡tú puedes!'));
+  $('quizBox').innerHTML =
+    '<div class="quiz-result"><div class="quiz-tag">Resultado</div><div class="quiz-score">' + sc + ' / ' + n + '</div><p>' + msg + '</p>' +
+    '<p class="screen-sub">Mejor puntaje: ' + saved.quizBest + ' / ' + n + '</p></div>' +
+    (wrong.length ? '<div class="quiz-review"><strong>Para repasar:</strong>' + wrong.map(w => '<div><b>' + escapeHtml(w.q) + '</b><br>Respuesta: ' + escapeHtml(w.ok) + '. ' + escapeHtml(w.why) + '</div>').join('') + '</div>' : '') +
+    '<div class="quiz-btns"><button type="button" class="btn-big" id="quizAgain">Intentar de nuevo</button><button type="button" class="btn-sec" id="quizHome">Volver al menú</button></div>';
+  $('quizAgain').addEventListener('click', () => startQuiz(true));
+  $('quizHome').addEventListener('click', () => showScreen('Home'));
+}
+
+/* ======================================================
+   Plano inclinado: ensayos POE y evidencias persistentes
+   ====================================================== */
+const inclineCanvas = $('inclineCanvas'), ictx = inclineCanvas.getContext('2d');
+let inclineDisplayResult = null;
+let inclineBlockPosition = 0.58;
+let rememberedInclineMuS = 0.6, rememberedInclineMuK = 0.4;
+
+function inclineConfig() {
+  const trial = Number($('inclineTrial').value);
+  const theta = Number($('incAngle').value);
+  const muS = trial === 1 ? 0 : Number($('incMuS').value);
+  const muK = trial === 1 ? 0 : Math.min(Number($('incMuK').value), muS);
+  return { trial, theta, mass: 5, muS, muK };
+}
+function computeIncline(cfg) {
+  const radians = cfg.theta * Math.PI / 180;
+  const weight = cfg.mass * g;
+  const parallel = weight * Math.sin(radians);
+  const perpendicular = weight * Math.cos(radians);
+  const normal = perpendicular;
+  const maxStatic = cfg.muS * normal;
+  const critical = cfg.muS > 0 ? Math.atan(cfg.muS) * 180 / Math.PI : 0;
+  let friction = 0, acceleration = 0, state = 'equilibrium', behavior = 'Equilibrio estático';
+  if (cfg.trial === 1) {
+    acceleration = parallel / cfg.mass;
+    state = cfg.theta <= 1e-8 ? 'equilibrium' : 'slide';
+    behavior = state === 'slide' ? 'Desliza y acelera cuesta abajo' : 'Equilibrio: θ = 0°';
+  } else if (parallel > maxStatic + 1e-7) {
+    friction = cfg.muK * normal;
+    acceleration = Math.max(0, (parallel - friction) / cfg.mass);
+    state = 'slide';
+    behavior = 'Desliza y acelera cuesta abajo';
+  } else {
+    friction = parallel;
+    const nearCritical = cfg.theta > 0 && Math.abs(cfg.theta - critical) <= 0.006;
+    state = nearCritical ? 'limit' : 'equilibrium';
+    behavior = nearCritical ? 'Equilibrio límite (ángulo crítico)' : 'Permanece en equilibrio estático';
+  }
+  return { ...cfg, weight, parallel, perpendicular, normal, maxStatic, critical, friction, acceleration, state, behavior };
+}
+function inclineTrialName(trial) {
+  return trial === 1 ? 'Ensayo 1 · Sin fricción' : (trial === 2 ? 'Ensayo 2 · Ángulo crítico' : 'Ensayo 3 · Equilibrio/desequilibrio');
+}
+function inclinePredictionOptions() {
+  const trial = Number($('inclineTrial').value), sel = $('incPrediction');
+  const options = trial === 1 ? [
+    ['', 'Elige antes de observar…'],
+    ['increase', 'Al aumentar θ, crecen mg sinθ y la aceleración'],
+    ['only-normal', 'Solo cambia mg cosθ; la aceleración no cambia'],
+    ['decrease', 'Al aumentar θ, disminuyen mg sinθ y la aceleración']
+  ] : [
+    ['', 'Elige antes de observar…'],
+    ['equilibrium', 'Permanece en equilibrio estático'],
+    ['limit', 'Está justo en el ángulo crítico'],
+    ['slide', 'Supera el roce máximo y desliza']
+  ];
+  sel.innerHTML = options.map(o => '<option value="' + o[0] + '">' + escapeHtml(o[1]) + '</option>').join('');
+}
+function updateInclineLabels() {
+  $('incAngleOut').textContent = fmt(Number($('incAngle').value), 2) + '°';
+  $('incMuSOut').textContent = fmt(Number($('incMuS').value), 2);
+  $('incMuKOut').textContent = fmt(Number($('incMuK').value), 2);
+}
+function clearInclineObservation() {
+  inclineDisplayResult = null;
+  $('incResult').hidden = true;
+  $('incExplanation').value = '';
+  $('incExplanationStatus').textContent = '';
+  updateInclineAvailability();
+  drawIncline();
+}
+function updateInclineAvailability() {
+  const pending = Boolean(saved.inclineDraft);
+  ['inclineTrial', 'incAngle', 'incPrediction'].forEach(id => { $(id).disabled = pending; });
+  $('incMuS').disabled = pending || Number($('inclineTrial').value) === 1;
+  $('incMuK').disabled = pending || Number($('inclineTrial').value) === 1;
+  $('incRun').disabled = pending || !$('incPrediction').value;
+  $('incRun').textContent = pending ? 'Guarda la explicación pendiente' : 'Observar ensayo';
+  $('incSaveExplanation').disabled = !pending || !$('incExplanation').value.trim();
+}
+function drawIncline() {
+  if (!inclineCanvas || !ictx) return;
+  const ratio = sizeCanvas(inclineCanvas, 700, 370);
+  ictx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  const W = 700, H = 370, cfg = inclineConfig(), theta = cfg.theta * Math.PI / 180;
+  ictx.clearRect(0, 0, W, H);
+  const start = { x: 125, y: 300 }, length = 340;
+  const tangent = { x: Math.cos(theta), y: -Math.sin(theta) };
+  const normalOut = { x: -Math.sin(theta), y: -Math.cos(theta) };
+  const end = { x: start.x + tangent.x * length, y: start.y + tangent.y * length };
+  ictx.lineCap = 'round';
+  ictx.strokeStyle = '#68758b'; ictx.lineWidth = 13;
+  ictx.beginPath(); ictx.moveTo(start.x, start.y); ictx.lineTo(end.x, end.y); ictx.stroke();
+  ictx.strokeStyle = '#d7deea'; ictx.lineWidth = 3;
+  ictx.beginPath(); ictx.moveTo(start.x, start.y - 7); ictx.lineTo(end.x, end.y - 7); ictx.stroke();
+  ictx.fillStyle = '#5e6878'; ictx.font = '600 14px system-ui'; ictx.fillText('θ = ' + fmt(cfg.theta, 2) + '°', start.x + 16, start.y - 18);
+  const surfaceX = start.x + tangent.x * length * inclineBlockPosition;
+  const surfaceY = start.y + tangent.y * length * inclineBlockPosition;
+  const cx = surfaceX + normalOut.x * 22, cy = surfaceY + normalOut.y * 22;
+  ictx.save(); ictx.translate(cx, cy); ictx.rotate(-theta);
+  ictx.fillStyle = '#f4b860'; ictx.strokeStyle = '#7d4e12'; ictx.lineWidth = 2;
+  ictx.beginPath(); ictx.roundRect(-27, -20, 54, 40, 7); ictx.fill(); ictx.stroke();
+  ictx.fillStyle = '#64451d'; ictx.font = '700 13px system-ui'; ictx.textAlign = 'center'; ictx.textBaseline = 'middle'; ictx.fillText('5 kg', 0, 0);
+  ictx.restore();
+  const result = inclineDisplayResult;
+  if (!result) {
+    ictx.fillStyle = '#697386'; ictx.font = '500 15px system-ui'; ictx.textAlign = 'left'; ictx.textBaseline = 'alphabetic';
+    ictx.fillText('Primero registra tu predicción y pulsa «Observar ensayo».', 125, 350);
+    return;
+  }
+  const scale = Math.min(2.4, 145 / result.weight), origin = { x: cx, y: cy };
+  const axisLen = 72;
+  ictx.save(); ictx.strokeStyle = '#aeb8c7'; ictx.lineWidth = 1.5; ictx.setLineDash([4, 4]);
+  ictx.beginPath(); ictx.moveTo(cx - tangent.x * axisLen, cy - tangent.y * axisLen); ictx.lineTo(cx + tangent.x * axisLen, cy + tangent.y * axisLen); ictx.stroke();
+  ictx.beginPath(); ictx.moveTo(cx - normalOut.x * axisLen, cy - normalOut.y * axisLen); ictx.lineTo(cx + normalOut.x * axisLen, cy + normalOut.y * axisLen); ictx.stroke();
+  ictx.restore();
+  ictx.fillStyle = '#596579'; ictx.font = '600 13px system-ui'; ictx.textAlign = 'left';
+  ictx.fillText('e∥', cx + tangent.x * 75 + 4, cy + tangent.y * 75);
+  ictx.fillText('e⊥', cx + normalOut.x * 75 + 4, cy + normalOut.y * 75);
+  const label = (point, txt, color, offsetX, offsetY) => {
+    if (!point) return;
+    ictx.fillStyle = color; ictx.font = '700 12px system-ui'; ictx.textAlign = 'left';
+    ictx.fillText(txt, point.x + offsetX, point.y + offsetY);
+  };
+  const mg = drawArrow(ictx, origin.x, origin.y, 0, result.weight * scale, '#7B3FE4', false);
+  label(mg, 'mg', '#7B3FE4', 6, 4);
+  const parallel = drawArrow(ictx, origin.x, origin.y, -Math.cos(theta) * result.parallel * scale, Math.sin(theta) * result.parallel * scale, '#D97706', false);
+  label(parallel, 'mg sinθ', '#B65F00', 4, 2);
+  const perpendicular = drawArrow(ictx, origin.x, origin.y, Math.sin(theta) * result.perpendicular * scale, Math.cos(theta) * result.perpendicular * scale, '#C62828', false);
+  label(perpendicular, 'mg cosθ', '#A51F1F', 5, 2);
+  const normal = drawArrow(ictx, origin.x, origin.y, normalOut.x * result.normal * scale, normalOut.y * result.normal * scale, '#0B6BCB', false);
+  label(normal, 'N', '#0B6BCB', 4, -5);
+  if (result.friction > 0.01) {
+    const friction = drawArrow(ictx, origin.x, origin.y, tangent.x * result.friction * scale, tangent.y * result.friction * scale, '#15803D', false);
+    label(friction, 'f', '#15803D', 5, -5);
+  }
+  ictx.textAlign = 'left'; ictx.textBaseline = 'alphabetic';
+}
+function renderInclineMetrics(r) {
+  $('incMgSin').textContent = fmt(r.parallel, 2) + ' N';
+  $('incMgCos').textContent = fmt(r.perpendicular, 2) + ' N';
+  $('incNormal').textContent = fmt(r.normal, 2) + ' N';
+  $('incFmax').textContent = fmt(r.maxStatic, 2) + ' N';
+  $('incFriction').textContent = fmt(r.friction, 2) + ' N';
+  $('incAccel').textContent = fmt(r.acceleration, 2) + ' m/s²';
+}
+function showInclineResult(r, prediction, explanation) {
+  inclineDisplayResult = r;
+  renderInclineMetrics(r);
+  $('incExplanationStatus').textContent = '';
+  $('incResult').hidden = false;
+  $('incResultTitle').textContent = inclineTrialName(r.trial) + ' · ' + r.behavior;
+  const predText = $('incPrediction').selectedOptions[0] ? $('incPrediction').selectedOptions[0].textContent : prediction;
+  const comparison = r.trial === 1 ? 'La predicción describe la tendencia al aumentar el ángulo; compara este registro con otros ángulos.' :
+    ((prediction === r.state) ? 'Tu predicción coincide con el estado observado.' : 'Compara tu predicción con el estado observado y explica la diferencia.');
+  $('incResultSummary').textContent = 'Predicción: ' + predText + '. Observación: ' + r.behavior + '. ' + comparison;
+  $('incResultFormula').textContent = r.trial === 1 ?
+    'Sin fricción: a = mg sinθ ÷ m = g sinθ = ' + fmt(r.acceleration, 2) + ' m/s².' :
+    (r.state === 'slide' ? 'mg sinθ (' + fmt(r.parallel, 2) + ' N) supera μsN (' + fmt(r.maxStatic, 2) + ' N); al deslizar, a = (mg sinθ − μkN) ÷ m = ' + fmt(r.acceleration, 2) + ' m/s².' :
+      'mg sinθ (' + fmt(r.parallel, 2) + ' N) no supera μsN (' + fmt(r.maxStatic, 2) + ' N); el roce estático lo equilibra y a = 0 m/s².');
+  $('incCritical').textContent = r.trial === 1 ? 'No aplica en el plano sin fricción.' : fmt(r.critical, 2) + '°  (tan⁻¹ ' + fmt(r.muS, 2) + ')';
+  $('incExplanation').value = explanation || '';
+  updateInclineAvailability();
+  drawIncline();
+}
+function animateIncline(r) {
+  const startTime = performance.now(), duration = r.state === 'slide' ? 1200 : 250;
+  const from = 0.60, to = r.state === 'slide' ? 0.35 : 0.60;
+  const frame = now => {
+    const p = Math.min(1, (now - startTime) / duration), eased = 1 - Math.pow(1 - p, 2);
+    inclineBlockPosition = from + (to - from) * eased;
+    drawIncline();
+    if (p < 1) requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+}
+function runInclineTrial() {
+  if (saved.inclineDraft || !$('incPrediction').value) return;
+  const cfg = inclineConfig(), result = computeIncline(cfg);
+  const prediction = $('incPrediction').value;
+  saved.inclineDraft = { ...result, prediction, predictionLabel: $('incPrediction').selectedOptions[0].textContent, explanation: '' };
+  persist();
+  inclineBlockPosition = 0.60;
+  showInclineResult(result, prediction, '');
+  if (result.trial === 1) $('incStatus').textContent = 'Observa los componentes y compara mg sinθ con la aceleración.';
+  else $('incStatus').textContent = result.behavior + '. Registra ahora una explicación formal.';
+  animateIncline(result);
+  updateInclineAvailability();
+}
+function renderInclineRecords() {
+  const rows = saved.inclineRows || [], body = $('incLogBody');
+  if (!rows.length) body.innerHTML = '<tr><td colspan="11" class="empty">Todavía no hay evidencias. Completa un ensayo POE para guardar la primera.</td></tr>';
+  else body.innerHTML = rows.map(r => '<tr><td>' + escapeHtml(r.trialName) + '</td><td>' + fmt(r.theta, 2) + '°</td><td>' + fmt(r.mass, 1) + ' kg</td><td>' + fmt(r.parallel, 2) + ' N</td><td>' + fmt(r.perpendicular, 2) + ' N</td><td>' + fmt(r.maxStatic, 2) + ' N</td><td>' + fmt(r.friction, 2) + ' N</td><td>' + fmt(r.acceleration, 2) + ' m/s²</td><td>' + escapeHtml(r.predictionLabel || '') + '</td><td>' + escapeHtml(r.behavior) + '</td><td>' + escapeHtml(r.explanation) + '</td></tr>').join('');
+  const counts = [1, 2, 3].map(n => rows.filter(r => r.trial === n).length);
+  $('incProgress').textContent = rows.length ? rows.length + ' evidencia(s) · E1: ' + counts[0] + ' · E2: ' + counts[1] + ' · E3: ' + counts[2] : 'Aún no hay ensayos registrados';
+  setText($('inclineMeta'), rows.length ? rows.length + (rows.length === 1 ? ' evidencia guardada' : ' evidencias guardadas') : '3 ensayos de predicción, observación y explicación');
+}
+function saveInclineExplanation() {
+  const explanation = $('incExplanation').value.trim();
+  if (!saved.inclineDraft || !explanation) return;
+  const r = { ...saved.inclineDraft, trialName: inclineTrialName(saved.inclineDraft.trial), explanation, timestamp: new Date().toISOString() };
+  saved.inclineRows = saved.inclineRows || [];
+  saved.inclineRows.push(r);
+  saved.inclineDraft = null;
+  persist();
+  $('incResult').hidden = true;
+  $('incExplanation').value = '';
+  $('incExplanationStatus').textContent = 'Explicación y datos guardados en el registro.';
+  $('incStatus').textContent = 'Ensayo guardado. Puedes repetirlo con otro ángulo o elegir otro ensayo.';
+  inclineDisplayResult = null;
+  inclineBlockPosition = 0.58;
+  $('incPrediction').value = '';
+  renderInclineRecords();
+  updateInclineAvailability();
+  drawIncline();
+}
+function restoreInclineDraft() {
+  const d = saved.inclineDraft;
+  if (!d) return;
+  $('inclineTrial').value = String(d.trial);
+  $('incAngle').value = String(d.theta);
+  $('incMuS').value = String(d.muS);
+  $('incMuK').value = String(d.muK);
+  updateInclineLabels();
+  inclinePredictionOptions();
+  $('incPrediction').value = d.prediction;
+  inclineBlockPosition = d.state === 'slide' ? 0.39 : 0.58;
+  showInclineResult(d, d.prediction, d.explanation || '');
+  $('incStatus').textContent = 'Ensayo pendiente: completa y guarda tu explicación para conservar la evidencia.';
+}
+function initializeInclineModule() {
+  rememberedInclineMuS = Number($('incMuS').value);
+  rememberedInclineMuK = Number($('incMuK').value);
+  if (Number($('inclineTrial').value) === 1) { $('incMuS').value = '0'; $('incMuK').value = '0'; }
+  inclinePredictionOptions();
+  updateInclineLabels();
+  $('incAngle').addEventListener('input', () => { updateInclineLabels(); $('incPrediction').value = ''; clearInclineObservation(); });
+  $('incMuS').addEventListener('input', () => {
+    const maxK = Math.min(0.8, Number($('incMuS').value));
+    $('incMuK').max = String(maxK);
+    if (Number($('incMuK').value) > maxK) $('incMuK').value = String(maxK);
+    updateInclineLabels(); $('incPrediction').value = ''; clearInclineObservation();
+  });
+  $('incMuK').addEventListener('input', () => { updateInclineLabels(); $('incPrediction').value = ''; clearInclineObservation(); });
+  $('inclineTrial').addEventListener('change', () => {
+    if (Number($('inclineTrial').value) === 1) {
+      rememberedInclineMuS = Number($('incMuS').value); rememberedInclineMuK = Number($('incMuK').value);
+      $('incMuS').value = '0'; $('incMuK').value = '0';
+    } else if (Number($('incMuS').value) === 0 && Number($('incMuK').value) === 0) {
+      $('incMuS').value = String(rememberedInclineMuS); $('incMuK').value = String(Math.min(rememberedInclineMuK, rememberedInclineMuS));
+    }
+    $('incMuK').max = String(Math.min(0.8, Number($('incMuS').value)));
+    updateInclineLabels(); inclinePredictionOptions(); $('incPrediction').value = ''; $('incStatus').textContent = 'Ajusta las variables, predice y observa.'; clearInclineObservation();
+  });
+  $('incPrediction').addEventListener('change', updateInclineAvailability);
+  $('incRun').addEventListener('click', runInclineTrial);
+  $('incExplanation').addEventListener('input', () => {
+    if (saved.inclineDraft) { saved.inclineDraft.explanation = $('incExplanation').value; persist(); }
+    updateInclineAvailability();
+  });
+  $('incSaveExplanation').addEventListener('click', saveInclineExplanation);
+  $('goIncline').addEventListener('click', () => showScreen('Incline'));
+  window.addEventListener('resize', () => { if (screen === 'Incline') drawIncline(); });
+  if (saved.inclineDraft) restoreInclineDraft();
+  renderInclineRecords();
+  updateInclineAvailability();
+  drawIncline();
+}
+
+function rowToExport(r) {
+  return [r.label, r.m, r.fa, r.frLabel, r.fnet, r.calcExport, r.acc, r.predLabel + ' -> ' + r.actualLabel];
+}
+function renderNotebook() {
+  const body = $('logBody');
+  const n = saved.rows.length;
+  setText($('nbCount'), n === 0 ? '' : n + (n === 1 ? ' resultado' : ' resultados'));
+  if (n === 0) {
+    body.innerHTML = '<tr id="emptyRow"><td class="empty" colspan="8">Todavía no hay resultados. Completa un nivel o prueba el modo libre y pulsa «Guardar resultado».</td></tr>';
+    return;
+  }
+  body.innerHTML = saved.rows.map(r =>
+    '<tr>' +
+    '<td><span class="tag-exp' + (r.free ? ' free' : '') + '">' + escapeHtml(r.label) + '</span></td>' +
+    '<td><strong>' + r.m + '</strong></td>' +
+    '<td>' + r.fa + '</td>' +
+    '<td>' + escapeHtml(r.frLabel) + '</td>' +
+    '<td><strong>' + (r.fnet > 0 ? '+' : '') + r.fnet + '</strong></td>' +
+    '<td>' + escapeHtml(r.calcDisplay) + '</td>' +
+    '<td><strong>' + escapeHtml(r.acc) + '</strong></td>' +
+    '<td class="left">' + escapeHtml(r.predLabel) + ' → <strong>' + escapeHtml(r.actualLabel) + '</strong> ' + (r.match ? '✓' : '✗') + '</td>' +
+    '</tr>').join('');
+}
+
+function renderBrief() {
+  const brief = $('brief');
+  const free = isFree();
+  brief.classList.toggle('explore', free);
+  if (free) {
+    setText($('briefEyebrow'), 'Modo libre');
+    setText($('briefTitle'), 'Prueba lo que quieras');
+    setHTML($('briefIdea'), '');
+    setHTML($('briefWhat'), 'Cambia la masa, el empuje y el roce como quieras. Verás la fuerza neta y la aceleración desde el principio. Empuja hacia la izquierda con valores negativos y observa cómo cambia la gráfica.');
+    setHTML($('dataChips'), '');
+    return;
+  }
+  const cfg = MISSIONS[currentMission];
+  setText($('briefEyebrow'), 'Nivel ' + currentMission + ' de ' + N_MISSIONS);
+  setText($('briefTitle'), 'Nivel ' + currentMission + ': ' + INTRO[currentMission].concept);
+  setHTML($('briefIdea'), '<strong>Idea clave:</strong> ' + escapeHtml(cfg.idea));
+  setHTML($('briefWhat'), cfg.what);
+  const items = [['mass', cfg.m, cfg.targetM], ['fapp', cfg.fa, cfg.targetFa], ['fric', cfg.fk, cfg.targetFk]];
+  let html = items.map(([key, start, target]) => {
+    const meta = VARS[key];
+    return key === cfg.unlock
+      ? '<span class="dchip change"><b>' + meta.name + '</b> ' + start + ' → ' + target + ' ' + meta.unit + ' <em>lo cambias tú</em></span>'
+      : '<span class="dchip"><b>' + meta.name + '</b> ' + target + ' ' + meta.unit + ' <em>fija</em></span>';
+  }).join('');
+  if (cfg.v0 !== 0) html += '<span class="dchip"><b>Velocidad inicial</b> ' + fmt(cfg.v0, 1) + ' m/s <em>fija</em></span>';
+  setHTML($('dataChips'), html);
+}
+
+function setLocks() {
+  const free = isFree();
+  const unlockKey = MISSIONS[currentMission].unlock;
+  [
+    { key: 'mass', el: massIn, grp: 'grpMass', tag: 'tagMass', dec: 'decMass', inc: 'incMass' },
+    { key: 'fapp', el: fappIn, grp: 'grpFapp', tag: 'tagFapp', dec: 'decFapp', inc: 'incFapp' },
+    { key: 'fric', el: fricIn, grp: 'grpFric', tag: 'tagFric', dec: 'decFric', inc: 'incFric' }
+  ].forEach(item => {
+    const unlocked = free || item.key === unlockKey;
+    item.el.disabled = !unlocked;
+    $(item.dec).disabled = !unlocked;
+    $(item.inc).disabled = !unlocked;
+    $(item.grp).className = 'var ' + (unlocked ? 'unlocked' : 'locked');
+    const tag = $(item.tag);
+    tag.textContent = unlocked ? (free ? 'Libre' : 'Tú lo cambias') : 'Fija';
+    tag.className = 'var-tag ' + (unlocked ? 'active' : 'fixed');
+  });
+  $('step1Sub').textContent = free ? 'Cambia las tres variables como quieras.' : 'Cambia solo la variable marcada hasta llegar a la meta.';
+  updateGoalChips();
+}
+
+function goalReached() {
+  const cfg = MISSIONS[currentMission];
+  return +massIn.value === cfg.targetM && +fappIn.value === cfg.targetFa && +fricIn.value === cfg.targetFk;
+}
+
+function updateGoalChips() {
+  const cfg = MISSIONS[currentMission];
+  const free = isFree();
+  [['mass', massIn, cfg.targetM, 'chipMass'], ['fapp', fappIn, cfg.targetFa, 'chipFapp'], ['fric', fricIn, cfg.targetFk, 'chipFric']].forEach(([key, el, target, id]) => {
+    const chip = $(id);
+    const show = !free && key === cfg.unlock;
+    chip.hidden = !show;
+    if (!show) return;
+    const reached = +el.value === target;
+    chip.className = 'goal-chip' + (reached ? ' reached' : '');
+    chip.textContent = reached ? 'Meta lograda: ' + target + ' ' + VARS[key].unit : 'Meta: ' + target + ' ' + VARS[key].unit;
+  });
+}
+
+function setHypothesisLock(locked) {
+  predGroup.querySelectorAll('input').forEach(r => { r.disabled = locked; });
+  predGroup.classList.toggle('locked', locked);
+  predAccIn.disabled = locked;
+  const badge = $('lockBadge');
+  badge.textContent = locked ? 'Predicción bloqueada' : 'Aún puedes cambiarla';
+  badge.className = locked ? 'lock-pill locked' : 'lock-pill';
+}
+
+function updateSteps() {
+  const free = isFree();
+  const needsCalc = currentMission === 5 && !free;
+  const hasQual = getPred() !== '';
+  const hasCalc = !isNaN(parseLocaleFloat(predAccIn.value));
+  const s1 = free || goalReached();
+  const s2 = hasQual && (!needsCalc || hasCalc);
+  const s3 = recordedThisRun;
+  const s4 = explanationSaved;
+  const flags = [s1, s2, s3, s4];
+  let currentSet = false;
+  flags.forEach((done, i) => {
+    const el = $('step' + (i + 1));
+    el.classList.toggle('done', done);
+    const isCurrent = !done && !currentSet && (i < 3 || recordedThisRun);
+    if (isCurrent) currentSet = true;
+    el.classList.toggle('current', isCurrent);
+  });
+  $('step4').classList.toggle('waiting', !recordedThisRun);
+  const sNum = $('step4').querySelector('.step-num');
+  sNum.textContent = s4 ? '✓' : '4';
+  ['step1', 'step2', 'step3'].forEach((id, i) => { $(id).querySelector('.step-num').textContent = flags[i] ? '✓' : String(i + 1); });
+}
+
+function validatePOEUnlock() {
+  updateGoalChips();
+  updateSteps();
+  if (hasStartedRun) return;
+  const free = isFree();
+  const cfg = MISSIONS[currentMission];
+  const mVal = +massIn.value, faVal = +fappIn.value, fkVal = +fricIn.value;
+  const targetReached = free || goalReached();
+  const hasQual = getPred() !== '';
+  const needsCalc = currentMission === 5 && !free;
+  const hasCalc = !isNaN(parseLocaleFloat(predAccIn.value));
+  const ready = targetReached && hasQual && (!needsCalc || hasCalc);
+  btnRun.disabled = !ready;
+
+  const status = $('obsStatus');
+  if (!targetReached) {
+    let txt = '';
+    if (faVal !== cfg.targetFa) txt = 'pon tu empuje en ' + cfg.targetFa + ' N (ahora está en ' + faVal + ' N)';
+    else if (fkVal !== cfg.targetFk) txt = 'pon el roce máximo en ' + cfg.targetFk + ' N (ahora está en ' + fkVal + ' N)';
+    else if (mVal !== cfg.targetM) txt = 'pon la masa en ' + cfg.targetM + ' kg (ahora está en ' + mVal + ' kg)';
+    status.textContent = 'Paso 1 pendiente: ' + txt + '. Después elige tu predicción.';
+  } else if (ready) {
+    status.textContent = 'Todo listo. Al pulsar «Iniciar» se mostrarán la fuerza neta y la aceleración, y tu predicción quedará bloqueada.';
+  } else {
+    status.textContent = needsCalc
+      ? 'Meta lograda. Elige tu predicción y escribe un número para la aceleración.'
+      : (free ? 'Elige tu predicción para activar «Iniciar».' : 'Meta lograda. Elige tu predicción para activar «Iniciar».');
+  }
+}
+
+const ICON_PLAY = '<svg class="ico" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 3.5v13l11-6.5z"/></svg>';
+const ICON_PAUSE = '<svg class="ico" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><rect x="4.5" y="3.5" width="4" height="13" rx="1"/><rect x="11.5" y="3.5" width="4" height="13" rx="1"/></svg>';
+const ICON_SAVE = '<svg class="ico" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>';
+const ICON_RESET = '<svg class="ico" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3.5v3.5h3.5"/></svg>';
+
+function setRunLabel(kind) {
+  const label = kind === 'pause' ? 'Pausar' : (kind === 'continue' ? 'Continuar' : 'Iniciar');
+  setHTML(btnRun, (kind === 'pause' ? ICON_PAUSE : ICON_PLAY) + '<span>' + label + '</span>');
+}
+function setRecordLabel(text, saved) {
+  setHTML(btnRecord, ICON_SAVE + '<span>' + text + '</span>');
+  btnRecord.dataset.saved = saved ? '1' : '';
+}
+btnReset.innerHTML = ICON_RESET + '<span>Reiniciar</span>';
+
+function clearTrialUI() {
+  $('obsFill').style.width = '0%';
+  setText($('obsTime'), '0,0 / 2,0 s');
+  $('obsBar').setAttribute('aria-valuenow', '0');
+  setRunLabel('start');
+  btnRecord.disabled = true;
+  setRecordLabel('Guardar resultado', false);
+  feedbackEl.className = 'result';
+  feedbackEl.hidden = true;
+  feedbackEl.textContent = '';
+  $('nextRow').hidden = true;
+  $('nextRow4').hidden = true;
+  $('advanceBar').hidden = true;
+  hideExplainCard();
+}
+
+function hideExplainCard() {
+  explanationSaved = false;
+  $('hintBox').hidden = true;
+  $('hintBtn').hidden = true;
+  $('explainInput').value = '';
+  $('explainStatus').textContent = '';
+  $('explainPrompt').textContent = '';
+  setText($('step4Sub'), 'Se activa cuando guardes tu resultado.');
+}
+
+function resetTrialEnvironment(reasonMsg) {
+  running = false;
+  hasStartedRun = false;
+  obsElapsed = 0;
+  recordedThisRun = false;
+  distMeters = 0;
+  v = isFree() ? 0 : MISSIONS[currentMission].v0;
+  t = 0;
+  history = [{ t: 0, v: v }];
+  clearPred();
+  predAccIn.value = '';
+  setHypothesisLock(false);
+  clearTrialUI();
+  validatePOEUnlock();
+  if (reasonMsg && !btnRun.disabled) $('obsStatus').textContent = reasonMsg;
+  updateTelemetry();
+  drawSim();
+  drawGraph();
+}
+
+function selectMission(num) {
+  currentMission = num;
+  const cfg = isFree() ? FREE_CFG : MISSIONS[num];
+  massIn.value = cfg.m;
+  fappIn.value = cfg.fa;
+  fricIn.value = cfg.fk;
+  $('calcPanel').hidden = !(num === 5 && !isFree());
+  renderBrief();
+  setLocks();
+  resetState(cfg.v0);
+}
+
+function resetState(vInit) {
+  running = false;
+  hasStartedRun = false;
+  obsElapsed = 0;
+  recordedThisRun = false;
+  distMeters = 0;
+  v = (vInit !== undefined && vInit !== null) ? vInit : (isFree() ? 0 : MISSIONS[currentMission].v0);
+  t = 0;
+  history = [{ t: 0, v: v }];
+  clearPred();
+  predAccIn.value = '';
+  setHypothesisLock(false);
+  clearTrialUI();
+  btnRun.disabled = true;
+  validatePOEUnlock();
+  updateTelemetry();
+  drawSim();
+  drawGraph();
+}
+
+function getPhysics() {
+  const m = +massIn.value;
+  const fa = +fappIn.value;
+  const frMax = +fricIn.value;
+  const weight = m * g;
+  const normal = weight;
+  let fr = 0, frType = 'none', isStatic = false;
+
+  if (Math.abs(v) > V_EPS) {
+    fr = v > 0 ? -frMax : frMax;
+    frType = frMax > 0 ? 'kinetic' : 'none';
+  } else if (Math.abs(fa) > 0) {
+    fr = -Math.sign(fa) * Math.min(Math.abs(fa), frMax);
+    frType = frMax > 0 ? 'static' : 'none';
+    isStatic = Math.abs(fa) <= frMax;
+  }
+  const fnet = fa + fr;
+  return { m, fa, fr, frType, fnet, acc: fnet / m, weight, normal, isStatic };
+}
+
+function evaluatePrediction(acc, vel) {
+  if (Math.abs(acc) < V_EPS && Math.abs(vel) > V_EPS) return 'const';
+  if (Math.abs(acc) < V_EPS && Math.abs(vel) <= V_EPS) return 'rest';
+  if (acc > V_EPS) return 'right';
+  return 'left';
+}
+
+function surfaceInfo(frMax) {
+  if (frMax === 0) return { label: 'Suelo: hielo liso (sin roce)', kind: 'ice' };
+  if (frMax <= 75) return { label: 'Suelo: roce medio', kind: 'mid' };
+  return { label: 'Suelo: muy rugoso', kind: 'rough' };
+}
+
+function updateTelemetry() {
+  const { m, fa, fr, fnet, acc, weight, isStatic } = getPhysics();
+  const revealed = isTelemetryRevealed();
+
+  setText($('lblMass'), m + ' kg');
+  setText($('lblFapp'), fa + ' N');
+  setText($('lblFric'), fricIn.value + ' N');
+  setText($('surfaceTag'), surfaceInfo(+fricIn.value).label);
+
+  setText($('outVert'), fmt(weight, 0) + ' N');
+  setText($('outVel'), fmt(v, 2) + ' m/s');
+  setText($('outTime'), fmt(t, 1) + ' s');
+  setText($('timeLabel'), 't = ' + fmt(t, 1) + ' s');
+
+  const badge = $('eqBadge');
+  const eqBox = $('equation');
+  if (!revealed) {
+    $('cardFnet').classList.add('mystery');
+    $('cardAcc').classList.add('mystery');
+    setText($('outFnet'), '?');
+    setText($('outAcc'), '?');
+    eqBox.classList.remove('revealed');
+    setText($('eqFormula'), 'Aquí aparecerá el cálculo cuando pulses «Iniciar». Piensa antes: ¿cuánto vale la suma de las fuerzas?');
+    setText(badge, 'Primero predice, luego pulsa «Iniciar»');
+    badge.className = 'state-pill hidden-pred';
+    return;
+  }
+
+  $('cardFnet').classList.remove('mystery');
+  $('cardAcc').classList.remove('mystery');
+  const fnetStr = (fnet > 0 ? '+' : '') + fnet + ' N';
+  const accStr = fmt(acc, 2) + ' m/s²';
+  setText($('outFnet'), fnetStr);
+  setText($('outAcc'), accStr);
+
+  const frSigned = (fr > 0 ? '+ ' : (fr < 0 ? '− ' : '+ ')) + Math.abs(fr) + ' N';
+  eqBox.classList.add('revealed');
+  setHTML($('eqFormula'),
+    'Fuerza neta = empuje + roce = (' + fa + ' N) ' + frSigned + ' = <span class="net">' + fnetStr + '</span><br>' +
+    'a = fuerza neta ÷ masa = ' + fnetStr + ' ÷ ' + m + ' kg = <span class="acc">' + accStr + '</span>');
+
+  let text, cls;
+  if (Math.abs(fnet) < 1e-6 && Math.abs(v) > V_EPS) {
+    text = 'Velocidad constante · la fuerza neta es 0 N'; cls = 'state-pill motion-eq';
+  } else if (Math.abs(fnet) < 1e-6) {
+    text = (isStatic && Math.abs(fa) > 0) ? 'Quieta · el roce compensa tu empuje' : 'Quieta · no hay fuerza neta';
+    cls = 'state-pill rest-eq';
+  } else if (Math.abs(v) > V_EPS && fnet * v < 0) {
+    text = 'Frenando · la fuerza neta va contra el movimiento'; cls = 'state-pill brake';
+  } else {
+    text = 'Acelerando · la fuerza neta no es 0 N'; cls = 'state-pill accel';
+  }
+  setText(badge, text);
+  if (badge.className !== cls) badge.className = cls;
+}
+
+function stepSlider(id, delta) {
+  const el = $(id);
+  if (el.disabled) return;
+  const next = Math.max(+el.min, Math.min(+el.max, +el.value + delta));
+  if (next !== +el.value) {
+    el.value = next;
+    el.dispatchEvent(new Event('input'));
+  }
+}
+[['decMass', 'mass', -25], ['incMass', 'mass', 25], ['decFapp', 'fapp', -25], ['incFapp', 'fapp', 25], ['decFric', 'fric', -25], ['incFric', 'fric', 25]]
+  .forEach(([btn, id, d]) => $(btn).addEventListener('click', () => stepSlider(id, d)));
+
+[massIn, fappIn, fricIn].forEach(el => el.addEventListener('input', () => {
+  resetTrialEnvironment('Cambiaste una variable: se borró tu predicción y la gráfica volvió a t = 0,0 s.');
+}));
+
+predGroup.addEventListener('change', validatePOEUnlock);
+predAccIn.addEventListener('input', validatePOEUnlock);
+
+btnRun.addEventListener('click', () => {
+  if (!hasStartedRun) {
+    hasStartedRun = true;
+    setHypothesisLock(true);
+  }
+  running = !running;
+  updateTelemetry();
+  drawSim();
+
+  if (running) {
+    setRunLabel('pause');
+    lastT = performance.now();
+    requestAnimationFrame(loop);
+  } else {
+    setRunLabel('continue');
+    if (!recordedThisRun) {
+      obsElapsed = 0;
+      $('obsFill').style.width = '0%';
+      setText($('obsTime'), '0,0 / 2,0 s');
+      btnRecord.disabled = true;
+      setRecordLabel('Guardar resultado', false);
+      $('obsStatus').textContent = 'Pausaste la simulación: el reloj de 2,0 s seguidos empieza otra vez.';
+    }
+  }
+  updateSteps();
+});
+
+btnReset.addEventListener('click', () => {
+  if (!isFree()) selectMission(currentMission);
+  else resetState(0);
+});
+
+btnRecord.addEventListener('click', () => {
+  if (obsElapsed < MIN_OBS_TIME || recordedThisRun || !getPred()) return;
+  const { m, fa, fr, frType, fnet, acc } = getPhysics();
+  const predKey = getPred();
+  const actualKey = evaluatePrediction(acc, v);
+  const match = predKey === actualKey;
+  const free = isFree();
+
+  let calcNote = '', calcValid = true, predAccDisplay = '—', predAccExport = '—';
+  if (currentMission === 5 && !free && predAccIn.value.trim() !== '') {
+    const userA = parseLocaleFloat(predAccIn.value);
+    calcValid = !isNaN(userA) && Math.abs(userA - acc) <= 0.05 + 1e-9;
+    predAccDisplay = fmt(userA, 2) + (calcValid ? ' ✓' : ' ✗');
+    predAccExport = fmt(userA, 2) + (calcValid ? ' (dentro de la tolerancia)' : ' (fuera de la tolerancia)');
+    calcNote = calcValid
+      ? ' Tu cálculo (a = ' + fmt(userA, 2) + ' m/s²) está dentro de la tolerancia de ±0,05.'
+      : ' Calculaste a = ' + fmt(userA, 2) + ' m/s², pero el valor real es ' + fmt(acc, 2) + ' m/s².';
+  }
+
+  const allCorrect = match && calcValid;
+  feedbackEl.hidden = false;
+  feedbackEl.className = 'result ' + (allCorrect ? 'ok' : 'warn');
+  feedbackEl.innerHTML = allCorrect
+    ? '<strong>¡Acertaste!</strong> Con una fuerza neta de ' + fnet + ' N ocurrió: <em>' + escapeHtml(PRED[actualKey].label) + '</em>.' + escapeHtml(calcNote)
+    : '<strong>Compara con tu predicción:</strong> pensaste «' + escapeHtml(PRED[predKey].label) + '», pero ocurrió «' + escapeHtml(PRED[actualKey].label) + '».' + escapeHtml(calcNote);
+
+  const label = free ? 'Modo libre' : 'Nivel ' + currentMission;
+  const frLabel = frType === 'static' ? Math.abs(fr) + ' (quieta)' : (frType === 'kinetic' ? Math.abs(fr) + ' (en movimiento)' : '0');
+  saved.rows.push({
+    label, free, m, fa, frLabel, fnet,
+    calcDisplay: predAccDisplay, calcExport: predAccExport, acc: fmt(acc, 2),
+    predLabel: PRED[predKey].label, actualLabel: PRED[actualKey].label, match, explanation: ''
+  });
+  currentRowIdx = saved.rows.length - 1;
+
+  recordedThisRun = true;
+  btnRecord.disabled = true;
+  setRecordLabel('Resultado guardado', true);
+
+  if (!free) {
+    saved.done[currentMission] = true;
+    saved.done[String(currentMission)] = true;
+  }
+  persist();
+  renderLevels();
+  renderHome();
+
+  $('obsStatus').textContent = free
+    ? 'Resultado guardado en tu cuaderno.'
+    : '¡Nivel ' + currentMission + ' completado! Ya puedes pasar al siguiente nivel.';
+
+  $('explainPrompt').textContent = free
+    ? 'Relaciona el valor y el signo de la fuerza neta con la inclinación de la línea en la gráfica.'
+    : MISSIONS[currentMission].explainQuestion;
+  $('hintBox').textContent = free
+    ? 'Mira el cálculo: si la fuerza neta es 0, la velocidad no cambia (línea horizontal). Si no es 0, la aceleración (fuerza neta ÷ masa) dice qué tan inclinada sube o baja la línea.'
+    : MISSIONS[currentMission].hint;
+  $('hintBox').hidden = true;
+  $('hintBtn').hidden = false;
+  $('hintBtn').textContent = 'Ver pista';
+  $('explainInput').value = '';
+  $('explainStatus').textContent = '';
+  setText($('step4Sub'), 'Escribe con tus palabras. La pista es opcional.');
+
+  const nextRow = $('nextRow');
+  const nextRow4 = $('nextRow4');
+  nextRow.hidden = false;
+  nextRow4.hidden = false;
+  if (!free && currentMission < N_MISSIONS) {
+    const nextNum = currentMission + 1;
+    const labelNext = 'Continuar al nivel ' + nextNum + ' →';
+    btnNext.textContent = labelNext;
+    btnNext.dataset.go = String(nextNum);
+    btnNext4.textContent = labelNext;
+    btnNext4.dataset.go = String(nextNum);
+  } else if (!free) {
+    const labelDone = '¡Completaste todos los niveles! Volver al mapa';
+    btnNext.textContent = labelDone;
+    btnNext.dataset.go = 'levels';
+    btnNext4.textContent = labelDone;
+    btnNext4.dataset.go = 'levels';
+  } else {
+    const labelBook = 'Ver mi cuaderno';
+    btnNext.textContent = labelBook;
+    btnNext.dataset.go = 'notebook';
+    btnNext4.textContent = labelBook;
+    btnNext4.dataset.go = 'notebook';
+  }
+  if (!free) {
+    const bar = $('btnAdvanceBar');
+    bar.dataset.go = btnNext.dataset.go;
+    $('advText').textContent = currentMission < N_MISSIONS ? '¡Nivel ' + currentMission + ' completado!' : '¡Completaste los 5 niveles!';
+    bar.textContent = currentMission < N_MISSIONS ? 'Ir al nivel ' + (currentMission + 1) + ' →' : 'Ver los niveles →';
+    $('advanceBar').hidden = false;
+  }
+  updateSteps();
+});
+
+$('btnAdvanceBar').addEventListener('click', () => handleAdvance($('btnAdvanceBar')));
+
+function handleAdvance(btn) {
+  const go = btn.dataset.go;
+  if (go === 'notebook') { showScreen('Notebook'); return; }
+  if (go === 'levels') { showScreen('Levels'); return; }
+  const nextNum = Number(go);
+  if (nextNum >= 1 && nextNum <= N_MISSIONS) {
+    saved.done[currentMission] = true;
+    saved.done[String(currentMission)] = true;
+    persist();
+    renderLevels();
+    renderHome();
+    openIntro(nextNum);
+  }
+}
+btnNext.addEventListener('click', () => handleAdvance(btnNext));
+btnNext4.addEventListener('click', () => handleAdvance(btnNext4));
+
+$('hintBtn').addEventListener('click', () => {
+  const box = $('hintBox');
+  box.hidden = !box.hidden;
+  $('hintBtn').textContent = box.hidden ? 'Ver pista' : 'Ocultar pista';
+});
+
+$('btnExplain').addEventListener('click', () => {
+  if (currentRowIdx < 0 || !recordedThisRun) {
+    $('explainStatus').textContent = 'Primero guarda tu resultado en el paso 3.';
+    return;
+  }
+  const text = $('explainInput').value.trim();
+  if (!text) { $('explainStatus').textContent = 'Escribe una breve explicación antes de guardar.'; return; }
+  saved.rows[currentRowIdx].explanation = text.replace(/\s+/g, ' ');
+  if (!isFree()) {
+    saved.done[currentMission] = true;
+    saved.done[String(currentMission)] = true;
+  }
+  persist();
+  renderLevels();
+  renderHome();
+  explanationSaved = true;
+  $('nextRow').hidden = false;
+  $('nextRow4').hidden = false;
+  $('explainStatus').textContent = 'Explicación guardada en el cuaderno.';
+  showToast('Explicación guardada en tu cuaderno de resultados.', 'ok');
+  updateSteps();
+});
+
+const EXPORT_HEADER = ['Nivel', 'Masa (kg)', 'Empuje (N)', 'Roce (N)', 'Fuerza neta (N)', 'a calculada (m/s2)', 'a observada (m/s2)', 'Prediccion vs Realidad'];
+
+$('btnCopy').addEventListener('click', () => {
+  if (saved.rows.length === 0) { showToast('Guarda al menos un resultado en tu cuaderno antes de copiar.', 'warn'); return; }
+  const fullText = [EXPORT_HEADER.join('\t')].concat(saved.rows.map(r => rowToExport(r).join('\t'))).join('\n');
+  const ta = document.createElement('textarea');
+  ta.value = fullText;
+  ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+  document.body.removeChild(ta);
+  if (ok) showToast('Tabla copiada. Puedes pegarla en Word o Excel.', 'ok');
+  else if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(fullText).then(
+      () => showToast('Tabla copiada. Puedes pegarla en Word o Excel.', 'ok'),
+      () => showToast('No se pudo copiar. Usa «Descargar CSV».', 'warn'));
+  } else showToast('No se pudo copiar. Usa «Descargar CSV».', 'warn');
+});
+
+$('btnCsv').addEventListener('click', () => {
+  if (saved.rows.length === 0) { showToast('Guarda al menos un resultado en tu cuaderno antes de descargar.', 'warn'); return; }
+  const esc = val => '"' + String(val).replace(/"/g, '""') + '"';
+  const csv = '\uFEFF' + [EXPORT_HEADER.map(esc).join(';')].concat(saved.rows.map(r => rowToExport(r).map(esc).join(';'))).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'evidencia_estatica_dinamica_POE.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast('Archivo descargado: evidencia_estatica_dinamica_POE.csv', 'ok');
+});
+
+let SCENE_W = 620;
+
+function sizeCanvas(cnv, lw, lh) {
+  const w = Math.max(200, Math.round(cnv.clientWidth || lw));
+  const d = Math.min(window.devicePixelRatio || 1, 2);
+  const pw = Math.round(w * d), ph = Math.round(w * d * lh / lw);
+  if (cnv.width !== pw || cnv.height !== ph) { cnv.width = pw; cnv.height = ph; }
+  if (cnv._lw !== lw) { cnv._lw = lw; cnv.style.aspectRatio = lw + ' / ' + lh; }
+  return cnv.width / lw;
+}
+function logicalWidth(cnv, base, min) {
+  const w = cnv.clientWidth || base;
+  return w >= base * 0.9 ? base : Math.max(min, Math.round(w));
+}
+
+function drawArrow(c, x1, y1, dx, dy, color, dashed) {
+  const len = Math.hypot(dx, dy);
+  if (len < 3) return null;
+  const x2 = x1 + dx, y2 = y1 + dy, angle = Math.atan2(dy, dx);
+  c.save();
+  c.strokeStyle = color;
+  c.fillStyle = color;
+  c.lineWidth = dashed ? 2.8 : 3.5;
+  c.lineCap = 'round';
+  if (dashed) c.setLineDash([6, 4]);
+  c.beginPath();
+  c.moveTo(x1, y1);
+  c.lineTo(x2 - Math.cos(angle) * 5, y2 - Math.sin(angle) * 5);
+  c.stroke();
+  c.restore();
+  c.fillStyle = color;
+  c.beginPath();
+  c.moveTo(x2, y2);
+  c.lineTo(x2 - 11 * Math.cos(angle - 0.42), y2 - 11 * Math.sin(angle - 0.42));
+  c.lineTo(x2 - 11 * Math.cos(angle + 0.42), y2 - 11 * Math.sin(angle + 0.42));
+  c.closePath();
+  c.fill();
+  return { x: x2, y: y2 };
+}
+
+function makePlacer(c, W, maxH) {
+  const rects = [];
+  const intersects = (a, b) => a.x < b.x + b.w + 3 && a.x + a.w + 3 > b.x && a.y < b.y + b.h + 3 && a.y + a.h + 3 > b.y;
+  return {
+    keepOut(r) { rects.push(r); },
+    label(text, color, cands) {
+      c.font = '700 12.5px ' + CANVAS_FONT;
+      const w = Math.ceil(c.measureText(text).width) + 16, h = 22;
+      let chosen = null;
+      for (let i = 0; i < cands.length; i++) {
+        const cd = cands[i];
+        let x = cd.a === 'r' ? cd.x - w : (cd.a === 'c' ? cd.x - w / 2 : cd.x);
+        const r = { x, y: cd.y - 16, w, h };
+        const inside = r.x >= 4 && r.x + r.w <= W - 4 && r.y >= 4 && r.y + r.h <= maxH - 4;
+        const free = !rects.some(o => intersects(r, o));
+        if (inside && free) { chosen = r; break; }
+        if (i === cands.length - 1) {
+          r.x = Math.max(4, Math.min(W - w - 4, r.x));
+          r.y = Math.max(4, Math.min(maxH - 4 - h, r.y));
+          chosen = r;
+        }
+      }
+      rects.push(chosen);
+      c.save();
+      c.fillStyle = 'rgba(255,255,255,0.94)';
+      c.beginPath(); c.roundRect(chosen.x, chosen.y, chosen.w, chosen.h, 7); c.fill();
+      c.strokeStyle = color; c.globalAlpha = 0.55; c.lineWidth = 1.3; c.stroke(); c.globalAlpha = 1;
+      c.fillStyle = color;
+      c.textBaseline = 'middle';
+      c.fillText(text, chosen.x + 8, chosen.y + chosen.h / 2 + 0.5);
+      c.restore();
+    }
+  };
+}
+
+function ik2(ax, ay, bx, by, l1, l2, bend) {
+  let dx = bx - ax, dy = by - ay, d = Math.hypot(dx, dy);
+  const maxd = l1 + l2 - 0.01;
+  if (d > maxd) { bx = ax + dx * maxd / d; by = ay + dy * maxd / d; dx = bx - ax; dy = by - ay; d = maxd; }
+  if (d < 0.5) d = 0.5;
+  const a = (l1 * l1 - l2 * l2 + d * d) / (2 * d);
+  const h = Math.sqrt(Math.max(0, l1 * l1 - a * a));
+  return { kx: ax + dx * a / d - bend * dy * h / d, ky: ay + dy * a / d + bend * dx * h / d, fx: bx, fy: by };
+}
+function gaitFoot(p) {
+  p = p - Math.floor(p);
+  const S = 11;
+  if (p < 0.6) return { x: S * (1 - 2 * p / 0.6), lift: 0 };
+  const q = (p - 0.6) / 0.4;
+  return { x: -S + 2 * S * q, lift: Math.sin(Math.PI * q) * 7 };
+}
+function limb(c, pts, color, w) {
+  c.strokeStyle = color; c.lineWidth = w; c.lineCap = 'round'; c.lineJoin = 'round';
+  c.beginPath(); c.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) c.lineTo(pts[i][0], pts[i][1]);
+  c.stroke();
+}
+function drawPusherFigure(c, boxLeft, boxRight, groundY, fa, vel, dist, tSim) {
+  if (Math.abs(fa) < 1) return;
+  const dir = fa > 0 ? 1 : -1;
+  const contactX = dir > 0 ? boxLeft : boxRight;
+  const L1 = 16.5, L2 = 16.5;
+  const moving = Math.abs(vel) > 0.05;
+  const lean = 0.16 + 0.24 * Math.min(1, Math.abs(fa) / 250);
+  const torso = 25;
+  const effort = (!moving ? Math.sin(tSim * 9) : 0);
+  const phase = dir * dist / 1.0;
+  const bob = moving ? Math.abs(Math.sin(phase * Math.PI * 2)) * 1.6 : 0;
+
+  const hipX = contactX - dir * (Math.sin(lean) * torso + 21) + dir * effort * 0.6;
+  const hipY = groundY - (L1 + L2 - 2.2) + bob;
+  const shX = hipX + dir * Math.sin(lean) * torso;
+  const shY = hipY - Math.cos(lean) * torso;
+  const ux = (shX - hipX) / torso, uy = (shY - hipY) / torso;
+  const headX = shX + ux * 13, headY = shY + uy * 13;
+
+  const w = Math.min(1, Math.abs(vel) / 0.5);
+  const fa1 = gaitFoot(phase), fb1 = gaitFoot(phase + 0.5);
+  const brA = -22 + effort * 1.2, brB = 7;
+  const offA = brA * (1 - w) + (fa1.x - 7) * w;
+  const offB = brB * (1 - w) + (fb1.x - 7) * w;
+  const liftA = fa1.lift * w, liftB = fb1.lift * w;
+  const footA = { x: hipX + dir * offA, y: groundY - liftA };
+  const footB = { x: hipX + dir * offB, y: groundY - liftB };
+
+  const SKIN = '#F2C29B', SHIRT = '#16A34A', SHIRT_D = '#0F7A38', PANTS = '#27406B', PANTS_D = '#1B2E4F', SHOE = '#1F2937', HAIR = '#3B2314';
+
+  c.save();
+  c.fillStyle = 'rgba(16,32,43,0.14)';
+  c.beginPath(); c.ellipse(hipX + dir * 2, groundY + 2, 20, 4, 0, 0, Math.PI * 2); c.fill();
+
+  const leg = (foot, col, shoeCol) => {
+    const k = ik2(hipX, hipY, foot.x, foot.y - 3, L1, L2, -dir);
+    limb(c, [[hipX, hipY], [k.kx, k.ky], [k.fx, k.fy]], col, 7);
+    limb(c, [[foot.x - dir * 1, foot.y - 1.5], [foot.x + dir * 9, foot.y - 1.5]], shoeCol, 6);
+  };
+  const arm = (dy, shirtCol) => {
+    const hx = contactX, hy = shY + 6 + dy;
+    const e = ik2(shX, shY + 1, hx, hy, 12, 12, dir);
+    limb(c, [[shX, shY + 1], [e.kx, e.ky]], shirtCol, 6);
+    limb(c, [[e.kx, e.ky], [e.fx, e.fy]], SKIN, 4.6);
+    c.fillStyle = SKIN; c.beginPath(); c.arc(e.fx, e.fy, 2.8, 0, Math.PI * 2); c.fill();
+  };
+
+  leg(footB, PANTS_D, '#0F172A');
+  arm(3, SHIRT_D);
+  limb(c, [[hipX, hipY + 1], [shX, shY]], SHIRT, 11);
+  c.strokeStyle = PANTS; c.lineWidth = 9; c.lineCap = 'round';
+  c.beginPath(); c.moveTo(hipX - ux * 1, hipY + 3); c.lineTo(hipX + ux * 3, hipY - 1.5); c.stroke();
+  leg(footA, PANTS, SHOE);
+  arm(0, SHIRT);
+  limb(c, [[shX, shY], [shX + ux * 6, shY + uy * 6]], SKIN, 5);
+  c.fillStyle = HAIR; c.beginPath(); c.arc(headX, headY, 8.6, 0, Math.PI * 2); c.fill();
+  c.fillStyle = SKIN; c.beginPath(); c.arc(headX + dir * 2, headY + 1.6, 7.2, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#10202B'; c.beginPath(); c.arc(headX + dir * 5, headY - 0.6, 1.3, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = '#8A4B2A'; c.lineWidth = 1.2; c.beginPath();
+  c.arc(headX + dir * 4.2, headY + 2.2, 2.6, 0.15 * Math.PI, 0.75 * Math.PI); c.stroke();
+  c.restore();
+}
+
+function drawCrate(c, x, y, s, groundY) {
+  c.save();
+  c.fillStyle = 'rgba(16,32,43,0.14)';
+  c.beginPath(); c.ellipse(x + s / 2, groundY + 2, s * 0.6, 5, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#F6D3A8';
+  c.strokeStyle = '#A5501B';
+  c.lineWidth = 2.5;
+  c.beginPath(); c.roundRect(x, y, s, s, 8); c.fill(); c.stroke();
+  c.strokeStyle = 'rgba(165,80,27,0.30)';
+  c.lineWidth = 1.5;
+  c.strokeRect(x + 6, y + 6, s - 12, s - 12);
+  c.beginPath();
+  c.moveTo(x + 6, y + 6); c.lineTo(x + s - 6, y + s - 6);
+  c.moveTo(x + s - 6, y + 6); c.lineTo(x + 6, y + s - 6);
+  c.stroke();
+  c.restore();
+}
+
+function drawSim() {
+  const LH = 245;
+  const W = logicalWidth(simCanvas, 620, 340);
+  SCENE_W = W;
+  const k = sizeCanvas(simCanvas, W, LH);
+  ctx.setTransform(k, 0, 0, k, 0, 0);
+  ctx.clearRect(0, 0, W, LH);
+
+  const groundY = 186;
+  const frMax = +fricIn.value;
+  const revealed = isTelemetryRevealed();
+  const surf = surfaceInfo(frMax).kind;
+
+  const sky = ctx.createLinearGradient(0, 0, 0, groundY);
+  sky.addColorStop(0, '#E4F1F8');
+  sky.addColorStop(1, '#F8FBFD');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, groundY);
+
+  const groundFill = surf === 'ice' ? '#CFEFF6' : (surf === 'mid' ? '#E1E8ED' : '#C6D1D9');
+  const groundLine = surf === 'ice' ? '#1F9DB5' : (surf === 'mid' ? '#62768A' : '#33475A');
+  ctx.fillStyle = groundFill;
+  ctx.fillRect(0, groundY, W, LH - groundY);
+  ctx.strokeStyle = groundLine;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(W, groundY); ctx.stroke();
+
+  const meterStep = 2;
+  const pxStep = meterStep * PIXELS_PER_METER;
+  const boxCenterX = Math.round(W * 0.39);
+  const startMeter = Math.floor((distMeters - boxCenterX / PIXELS_PER_METER) / meterStep) * meterStep;
+  const endMeter = startMeter + Math.ceil(W / pxStep) * meterStep + 4;
+
+  ctx.font = '700 11px ' + CANVAS_FONT;
+  ctx.textBaseline = 'alphabetic';
+  for (let mMark = startMeter; mMark <= endMeter; mMark += meterStep) {
+    const gx = boxCenterX + (mMark - distMeters) * PIXELS_PER_METER;
+    if (gx < -20 || gx > W + 20) continue;
+    ctx.strokeStyle = '#8EA1B1';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(gx, groundY); ctx.lineTo(gx, groundY - 14); ctx.stroke();
+    ctx.fillStyle = '#41576A';
+    ctx.fillText(mMark + ' m', gx - 10, groundY + 14);
+    if (frMax > 0) {
+      ctx.fillStyle = frMax > 75 ? '#41576A' : '#8EA1B1';
+      const teeth = frMax > 75 ? 4 : 2;
+      for (let j = 1; j <= teeth; j++) {
+        const tx = gx + (pxStep * j) / (teeth + 1);
+        ctx.beginPath(); ctx.moveTo(tx - 3, groundY); ctx.lineTo(tx, groundY + 5); ctx.lineTo(tx + 3, groundY); ctx.closePath(); ctx.fill();
+      }
+    }
+  }
+
+  const { m, fa, fr, frType, fnet, weight, normal } = getPhysics();
+  const size = 50 + m * 0.18;
+  const boxX = boxCenterX - size / 2;
+  const boxTop = groundY - size;
+  const cx = boxCenterX;
+  const cy = boxTop + size / 2;
+
+  drawPusherFigure(ctx, boxX, boxX + size, groundY, fa, v, distMeters, t);
+  drawCrate(ctx, boxX, boxTop, size, groundY);
+
+  ctx.fillStyle = '#10202B';
+  ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#6B2E0F';
+  ctx.font = '700 13px ' + CANVAS_FONT;
+  ctx.fillText(m + ' kg', boxX + 9, boxTop + 20);
+
+  const nbW = W >= 540 ? 248 : W - 24;
+  const nbH = 56, nbX = W - nbW - 12, nbY = 10;
+
+  const placer = makePlacer(ctx, W, LH);
+  placer.keepOut({ x: boxX - 3, y: boxTop - 3, w: size + 6, h: size + 6 });
+  placer.keepOut({ x: nbX, y: nbY, w: nbW, h: nbH });
+  if (Math.abs(fa) >= 1) {
+    placer.keepOut(fa > 0
+      ? { x: boxX - 50, y: groundY - 78, w: 50, h: 80 }
+      : { x: boxX + size, y: groundY - 78, w: 50, h: 80 });
+  }
+
+  const hScale = Math.min(0.48, (W - cx - 110) / 300, (cx - 30) / 300);
+  const L = groundY + 22 - cy;
+  const velY = Math.min(boxTop - 36, 82);
+
+  if (Math.abs(v) > V_EPS) {
+    const vLen = Math.max(24, Math.min(115, Math.abs(v) * 16)) * Math.sign(v);
+    const tip = drawArrow(ctx, cx, velY, vLen, 0, COL.vel, true);
+    if (tip) {
+      const txt = 'Velocidad ' + fmt(v, 2) + ' m/s';
+      placer.label(txt, COL.vel, v > 0
+        ? [{ x: tip.x + 8, y: tip.y + 5, a: 'l' }, { x: cx, y: tip.y - 12, a: 'c' }]
+        : [{ x: tip.x - 8, y: tip.y + 5, a: 'r' }, { x: cx, y: tip.y - 12, a: 'c' }]);
+    }
+  }
+
+  if (Math.abs(fa) > 0) {
+    const tip = drawArrow(ctx, cx, cy - 8, fa * hScale, 0, COL.push);
+    if (tip) {
+      const txt = 'Empuje ' + fa + ' N';
+      placer.label(txt, COL.push, fa > 0
+        ? [{ x: tip.x + 8, y: tip.y + 5, a: 'l' }, { x: boxX + size + 8, y: tip.y + 5, a: 'l' }]
+        : [{ x: tip.x - 8, y: tip.y + 5, a: 'r' }, { x: boxX - 8, y: tip.y + 5, a: 'r' }]);
+    }
+  }
+  if (Math.abs(fr) > 0) {
+    const tip = drawArrow(ctx, cx, cy + 9, fr * hScale, 0, COL.fric);
+    const txt = (frType === 'static' ? 'Roce (quieta) ' : 'Roce (en movimiento) ') + Math.abs(fr) + ' N';
+    const ty = cy + 9;
+    placer.label(txt, COL.fric, fr < 0
+      ? [{ x: (tip ? tip.x : cx) - 8, y: ty + 5, a: 'r' }, { x: boxX + size + 8, y: ty + 24, a: 'l' }, { x: boxX - 8, y: ty + 24, a: 'r' }]
+      : [{ x: (tip ? tip.x : cx) + 8, y: ty + 5, a: 'l' }, { x: boxX - 8, y: ty + 24, a: 'r' }, { x: boxX + size + 8, y: ty + 24, a: 'l' }]);
+  }
+
+  const nTip = drawArrow(ctx, cx, cy, 0, -L, COL.normal);
+  if (nTip) {
+    const txt = 'Normal ' + fmt(normal, 0) + ' N';
+    placer.label(txt, COL.normal, v > V_EPS
+      ? [{ x: cx - 10, y: nTip.y + 5, a: 'r' }, { x: cx + 10, y: nTip.y + 5, a: 'l' }]
+      : [{ x: cx + 10, y: nTip.y + 5, a: 'l' }, { x: cx - 10, y: nTip.y + 5, a: 'r' }]);
+  }
+  const wTip = drawArrow(ctx, cx, cy, 0, L, COL.weight);
+  if (wTip) {
+    placer.label('Peso ' + fmt(weight, 0) + ' N', COL.weight,
+      [{ x: cx + 10, y: wTip.y + 5, a: 'l' }, { x: cx - 10, y: wTip.y + 5, a: 'r' }]);
+  }
+  if (Math.abs(fa) === 0 && Math.abs(fr) === 0) {
+    placer.label('Sin fuerzas horizontales', '#425666',
+      [{ x: boxX + size + 10, y: cy + 5, a: 'l' }, { x: boxX - 10, y: cy + 5, a: 'r' }]);
+  }
+
+  ctx.save();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.strokeStyle = revealed ? COL.net : '#8D89EE';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 3]);
+  ctx.beginPath(); ctx.roundRect(nbX, nbY, nbW, nbH, 10); ctx.fill(); ctx.stroke();
+  ctx.restore();
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = revealed ? COL.net : COL.mystery;
+  ctx.font = '700 12px ' + CANVAS_FONT;
+  ctx.fillText('FUERZA NETA = suma de fuerzas', nbX + 12, nbY + 18);
+
+  if (!revealed) {
+    ctx.fillStyle = COL.mystery;
+    ctx.font = '700 13px ' + CANVAS_FONT;
+    ctx.fillText('? Predice y pulsa «Iniciar»', nbX + 12, nbY + 41);
+  } else if (Math.abs(fnet) > 0) {
+    const half = Math.max(34, nbW / 2 - 66);
+    const dx = Math.max(-half, Math.min(half, fnet * 0.4));
+    const sx = fnet > 0 ? nbX + 18 : nbX + nbW - 18;
+    const tip = drawArrow(ctx, sx, nbY + 40, dx, 0, COL.net);
+    const txt = (fnet > 0 ? '+' : '') + fnet + ' N';
+    ctx.fillStyle = COL.net;
+    ctx.font = '700 14px ' + CANVAS_FONT;
+    if (tip) {
+      if (fnet > 0) { ctx.textAlign = 'left'; ctx.fillText(txt, tip.x + 8, nbY + 45); }
+      else { ctx.textAlign = 'right'; ctx.fillText(txt, tip.x - 8, nbY + 45); }
+      ctx.textAlign = 'left';
+    }
+  } else {
+    ctx.fillStyle = COL.ink2;
+    ctx.font = '700 13px ' + CANVAS_FONT;
+    ctx.fillText('0 N · fuerzas equilibradas', nbX + 12, nbY + 41);
+  }
+}
+
+function niceStep(span, targetTicks) {
+  const raw = span / targetTicks;
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const f = raw / mag;
+  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * mag;
+}
+
+function drawGraph() {
+  const LH = 220;
+  const w = logicalWidth(graphCanvas, 420, 260), h = LH;
+  const k = sizeCanvas(graphCanvas, w, h);
+  gctx.setTransform(k, 0, 0, k, 0, 0);
+  gctx.clearRect(0, 0, w, h);
+  gctx.textBaseline = 'alphabetic';
+
+  const padL = 44, padB = 34, padT = 22, padR = 14;
+  const plotW = w - padL - padR;
+  const plotH = h - padT - padB;
+
+  const maxT = Math.max(8, Math.ceil(t / 2) * 2);
+  let rawMaxV = 10, rawMinV = 0;
+  for (const p of history) { if (p.v > rawMaxV) rawMaxV = p.v; if (p.v < rawMinV) rawMinV = p.v; }
+  const stepV = niceStep(rawMaxV - rawMinV, 5);
+  const maxV = Math.ceil(rawMaxV / stepV) * stepV;
+  const minV = Math.floor(rawMinV / stepV) * stepV;
+  const spanV = Math.max(1, maxV - minV);
+  const stepT = niceStep(maxT, 6);
+
+  const toPx = tv => padL + (tv / maxT) * plotW;
+  const toPy = vel => padT + plotH * (1 - (vel - minV) / spanV);
+
+  gctx.font = '11.5px ' + CANVAS_FONT;
+  gctx.strokeStyle = '#E3EAEF';
+  gctx.lineWidth = 1;
+  gctx.fillStyle = COL.ink2;
+  gctx.textAlign = 'right';
+  for (let val = minV; val <= maxV + 1e-9; val += stepV) {
+    const gy = toPy(val);
+    gctx.beginPath(); gctx.moveTo(padL, gy); gctx.lineTo(padL + plotW, gy); gctx.stroke();
+    gctx.fillText(fmt(val, stepV < 1 ? 1 : 0), padL - 6, gy + 4);
+  }
+  gctx.textAlign = 'center';
+  for (let tv = 0; tv <= maxT + 1e-9; tv += stepT) {
+    const gx = toPx(tv);
+    gctx.beginPath(); gctx.moveTo(gx, padT); gctx.lineTo(gx, padT + plotH); gctx.stroke();
+    gctx.fillText(fmt(tv, 0), gx, padT + plotH + 15);
+  }
+  gctx.textAlign = 'left';
+
+  const obsX = toPx(MIN_OBS_TIME);
+  gctx.save();
+  gctx.strokeStyle = COL.ok;
+  gctx.lineWidth = 1.8;
+  gctx.setLineDash([5, 4]);
+  gctx.beginPath(); gctx.moveTo(obsX, padT); gctx.lineTo(obsX, padT + plotH); gctx.stroke();
+  gctx.restore();
+  gctx.fillStyle = COL.ok;
+  gctx.font = '700 11px ' + CANVAS_FONT;
+  gctx.fillText('2 s', obsX + 4, padT + 12);
+
+  const zeroY = toPy(0);
+  gctx.strokeStyle = '#5E7284';
+  gctx.lineWidth = 1.8;
+  gctx.beginPath(); gctx.moveTo(padL, zeroY); gctx.lineTo(padL + plotW, zeroY); gctx.stroke();
+  gctx.beginPath(); gctx.moveTo(padL, padT); gctx.lineTo(padL, padT + plotH); gctx.stroke();
+
+  gctx.fillStyle = COL.ink;
+  gctx.font = '700 11.5px ' + CANVAS_FONT;
+  gctx.fillText('Velocidad (m/s)', 6, 13);
+  gctx.textAlign = 'right';
+  gctx.fillText('Tiempo (s)', w - 8, h - 5);
+  gctx.textAlign = 'left';
+
+  if (history.length < 2) return;
+
+  gctx.beginPath();
+  history.forEach((pt, idx) => { const px = toPx(pt.t), py = toPy(pt.v); if (idx === 0) gctx.moveTo(px, py); else gctx.lineTo(px, py); });
+  const last = history[history.length - 1];
+  gctx.lineTo(toPx(last.t), zeroY);
+  gctx.lineTo(toPx(history[0].t), zeroY);
+  gctx.closePath();
+  gctx.fillStyle = 'rgba(10,122,145,0.12)';
+  gctx.fill();
+
+  gctx.strokeStyle = COL.vel;
+  gctx.lineWidth = 3.2;
+  gctx.lineJoin = 'round';
+  gctx.beginPath();
+  history.forEach((pt, idx) => { const px = toPx(pt.t), py = toPy(pt.v); if (idx === 0) gctx.moveTo(px, py); else gctx.lineTo(px, py); });
+  gctx.stroke();
+
+  gctx.fillStyle = COL.vel;
+  gctx.beginPath(); gctx.arc(toPx(last.t), toPy(last.v), 4.5, 0, Math.PI * 2); gctx.fill();
+}
+
+function appendHistoryPoint(tVal, vVal) {
+  history.push({ t: tVal, v: vVal });
+  if (history.length > MAX_HISTORY_POINTS) {
+    const compacted = [history[0]];
+    for (let i = 1; i < history.length - 1; i += 2) compacted.push(history[i]);
+    compacted.push(history[history.length - 1]);
+    history = compacted;
+  }
+}
+
+function loop(now) {
+  if (!running) return;
+  const dt = Math.min((now - lastT) / 1000, 0.05);
+  lastT = now;
+
+  const { acc } = getPhysics();
+  const vPrev = v;
+  let vNext = v + acc * dt;
+  if ((vPrev > 0 && vNext <= 0) || (vPrev < 0 && vNext >= 0)) vNext = 0;
+  v = vNext;
+
+  t += dt;
+  obsElapsed += dt;
+  distMeters += v * dt;
+  appendHistoryPoint(t, v);
+
+  if (!recordedThisRun) {
+    const pct = Math.min(100, (obsElapsed / MIN_OBS_TIME) * 100);
+    $('obsFill').style.width = pct + '%';
+    $('obsBar').setAttribute('aria-valuenow', String(Math.round(pct)));
+    setText($('obsTime'), fmt(Math.min(obsElapsed, MIN_OBS_TIME), 1) + ' / 2,0 s');
+    if (obsElapsed < MIN_OBS_TIME) {
+      const rem = Math.max(0, MIN_OBS_TIME - obsElapsed);
+      btnRecord.disabled = true;
+      setRecordLabel('Observa… ' + fmt(rem, 1) + ' s', false);
+      setText($('obsStatus'), 'Observando… faltan ' + fmt(rem, 1) + ' s seguidos. No pauses o el reloj empieza otra vez.');
+    } else {
+      btnRecord.disabled = false;
+      setRecordLabel('Guardar resultado', false);
+      setText($('obsStatus'), '¡Listo! Ya observaste 2,0 s seguidos. Pulsa «Guardar resultado».');
+    }
+  }
+
+  // En los niveles: a los 15 s de simulación se evalúa solo y se permite avanzar (no aplica al modo libre)
+  if (!isFree() && !recordedThisRun && t >= AUTO_EVAL_S) {
+    obsElapsed = Math.max(obsElapsed, MIN_OBS_TIME);
+    btnRecord.disabled = false;
+    btnRecord.click();
+    running = false;
+    setRunLabel('continue');
+    $('obsStatus').textContent = '¡Pasaron 15 s! Tu resultado se evaluó y se guardó. Ya puedes pasar al siguiente nivel.';
+    updateTelemetry(); drawSim(); drawGraph();
+    return;
+  }
+  if (!isFree() && !recordedThisRun && t < AUTO_EVAL_S && obsElapsed >= MIN_OBS_TIME) {
+    setText($('obsStatus'), '¡Listo! Pulsa «Guardar resultado» (o espera: a los 15 s se evalúa solo, faltan ' + Math.ceil(AUTO_EVAL_S - t) + ' s).');
+  }
+
+  updateTelemetry();
+  drawSim();
+  drawGraph();
+  requestAnimationFrame(loop);
+}
+
+if (window.ResizeObserver) {
+  let lastW = 0;
+  new ResizeObserver(entries => {
+    const wd = Math.round(entries[0].contentRect.width);
+    if (wd !== lastW) { lastW = wd; drawSim(); drawGraph(); }
+  }).observe(document.querySelector('.workspace'));
+} else {
+  window.addEventListener('resize', () => { drawSim(); drawGraph(); });
+}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { drawSim(); drawGraph(); });
+
+setRunLabel('start');
+setRecordLabel('Guardar resultado', false);
+
+$('goLearn').addEventListener('click', () => showScreen('Levels'));
+$('goFree').addEventListener('click', startFree);
+$('goBook').addEventListener('click', () => showScreen('Notebook'));
+$('btnBack').addEventListener('click', goBack);
+$('btnStartLevel').addEventListener('click', () => startLevel(introLevel));
+
+let confirmTimers = {};
+function twoClick(btnId, idleText, action) {
+  const b = $(btnId);
+  b.addEventListener('click', () => {
+    if (b.dataset.armed === '1') {
+      clearTimeout(confirmTimers[btnId]);
+      b.dataset.armed = ''; b.textContent = idleText;
+      action();
+    } else {
+      b.dataset.armed = '1'; b.textContent = 'Pulsa otra vez para confirmar';
+      confirmTimers[btnId] = setTimeout(() => { b.dataset.armed = ''; b.textContent = idleText; }, 3500);
+    }
+  });
+}
+twoClick('btnResetProgress', 'Borrar mi avance y empezar de cero', () => { saved.done = {}; persist(); renderLevels(); renderHome(); showToast('Avance borrado. Tu cuaderno se conserva.', 'ok'); });
+twoClick('btnClearBook', 'Borrar cuaderno', () => { saved.rows = []; persist(); renderNotebook(); renderHome(); showToast('Cuaderno borrado.', 'ok'); });
+
+loadSaved();
+initializeInclineModule();
+selectMission(1);
+showScreen('Home');
+</script>
+</body>
+</html>
